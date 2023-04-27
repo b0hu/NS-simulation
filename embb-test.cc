@@ -1,0 +1,484 @@
+/* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
+/*
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation;
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+#include "ns3/core-module.h"
+#include "ns3/config-store.h"
+#include "ns3/network-module.h"
+#include "ns3/internet-module.h"
+#include "ns3/internet-apps-module.h"
+#include "ns3/applications-module.h"
+#include "ns3/mobility-module.h"
+#include "ns3/point-to-point-module.h"
+#include "ns3/flow-monitor-module.h"
+#include "ns3/nr-module.h"
+#include "ns3/config-store-module.h"
+#include "ns3/antenna-module.h"
+#include "ns3/opengym-module.h"
+
+using namespace ns3;
+
+NS_LOG_COMPONENT_DEFINE ("eMBB NS Simulation Test");
+
+/*
+Define observation space
+*/
+Ptr<OpenGymSpace> MyGetObservationSpace()
+{
+  uint32_t nodeNum = 4;
+  float low = 0.0;
+  float high = 10.0;
+  std::vector<uint32_t> shape = {nodeNum,};
+  std::string dtype = TypeNameGet<uint32_t> ();
+  Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace> (low, high, shape, dtype);
+  NS_LOG_UNCOND ("MyGetObservationSpace: " << space);
+  return space;
+}
+
+/*
+Define action space
+*/
+Ptr<OpenGymSpace> MyGetActionSpace(void)
+{
+  uint32_t nodeNum = 4;
+
+  Ptr<OpenGymDiscreteSpace> space = CreateObject<OpenGymDiscreteSpace> (nodeNum);
+  NS_LOG_UNCOND ("MyGetActionSpace: " << space);
+  return space;
+}
+
+/*
+Define game over condition
+*/
+bool MyGetGameOver(void)
+{
+
+  bool isGameOver = false;
+  bool test = false;
+  static float stepCounter = 0.0;
+  stepCounter += 1;
+  if (stepCounter == 10 && test) {
+      isGameOver = true;
+  }
+  NS_LOG_UNCOND ("MyGetGameOver: " << isGameOver);
+  return isGameOver;
+}
+
+/*
+Collect observations
+*/
+Ptr<OpenGymDataContainer> MyGetObservation(void)
+{
+  uint32_t nodeNum = 4;
+  uint32_t low = 0.0;
+  uint32_t high = 10.0;
+  Ptr<UniformRandomVariable> rngInt = CreateObject<UniformRandomVariable> ();
+
+  std::vector<uint32_t> shape = {nodeNum,};
+  Ptr<OpenGymBoxContainer<uint32_t> > box = CreateObject<OpenGymBoxContainer<uint32_t> >(shape);
+
+  // generate random data
+  for (uint32_t i = 0; i<nodeNum; i++){
+    uint32_t value = rngInt->GetInteger(low, high);
+    box->AddValue(value);
+  }
+
+  NS_LOG_UNCOND ("MyGetObservation: " << box);
+  return box;
+}
+
+/*
+Define reward function
+*/
+float MyGetReward(void)
+{
+  static float reward = 0.0;
+  reward += 1;
+  return reward;
+}
+
+/*
+Define extra info. Optional
+*/
+std::string MyGetExtraInfo(void)
+{
+  std::string myInfo = "testInfo";
+  myInfo += "|123";
+  NS_LOG_UNCOND("MyGetExtraInfo: " << myInfo);
+  return myInfo;
+}
+
+
+/*
+Execute received actions
+*/
+bool MyExecuteActions(Ptr<OpenGymDataContainer> action)
+{
+  Ptr<OpenGymDiscreteContainer> discrete = DynamicCast<OpenGymDiscreteContainer>(action);
+  NS_LOG_UNCOND ("MyExecuteActions: " << action);
+  return true;
+}
+
+void ScheduleNextStateRead(double envStepTime, Ptr<OpenGymInterface> openGym)
+{
+  Simulator::Schedule (MilliSeconds(envStepTime), &ScheduleNextStateRead, envStepTime, openGym);
+  openGym->NotifyCurrentState();
+}
+
+int 
+main (int argc, char *argv[])
+{
+  NS_LOG_UNCOND ("eMBB NS Test");
+
+  uint16_t gNbNum = 4;
+  uint16_t ueNum = 4;
+
+  uint32_t embbPacketSize = 1000;
+  uint32_t simTimeMs = 1800;
+  uint32_t envStepTime = 200;
+  uint32_t eMBBStartTimeMs = 400;
+  double centralFrequencyBand = 28e9;
+  double bandwidthBand1 = 100e6;
+  //double totalTxPower = 4;
+  uint16_t PorteMBB = 1234;
+  uint32_t simSeed = 1;
+  uint32_t testArg = 0;
+
+  std::string simTag = "default";
+  std::string outputDir = "./";
+
+  Config::SetDefault ("ns3::LteRlcUm::MaxTxBufferSize", UintegerValue (999999999));
+
+  int64_t randomStream = 1;
+
+  CommandLine cmd;
+
+  cmd.AddValue ("PorteMBB", "Port number for OpenGym env. Default: 5555", PorteMBB);
+  cmd.AddValue ("simSeed", "Seed for random generator. Default: 1", simSeed);
+  // optional parameters
+  cmd.AddValue ("simTime", "Simulation time in seconds. Default: 10s", simTimeMs);
+  cmd.AddValue ("testArg", "Extra simulation argument. Default: 0", testArg);
+  cmd.Parse (argc, argv);
+
+  NS_LOG_UNCOND ("simTimeMs: " << simTimeMs);
+  NS_LOG_UNCOND ("envStepTime" << envStepTime);
+
+  RngSeedManager::SetSeed (1);
+  RngSeedManager::SetRun (simSeed);
+
+  Ptr<OpenGymInterface> openGym = CreateObject<OpenGymInterface> (1234);
+  openGym->SetGetActionSpaceCb( MakeCallback (&MyGetActionSpace) );
+  openGym->SetGetObservationSpaceCb( MakeCallback (&MyGetObservationSpace) );
+  openGym->SetGetGameOverCb( MakeCallback (&MyGetGameOver) );
+  openGym->SetGetObservationCb( MakeCallback (&MyGetObservation) );
+  openGym->SetGetRewardCb( MakeCallback (&MyGetReward) );
+  openGym->SetGetExtraInfoCb( MakeCallback (&MyGetExtraInfo) );
+  openGym->SetExecuteActionsCb( MakeCallback (&MyExecuteActions) );
+
+  GridScenarioHelper gridScenario;
+  gridScenario.SetRows (gNbNum / 2);
+  gridScenario.SetColumns (gNbNum);
+  gridScenario.SetHorizontalBsDistance (5.0);
+  gridScenario.SetBsHeight (10.0);
+  gridScenario.SetUtHeight (1.5);
+  // must be set before BS number
+  gridScenario.SetSectorization (GridScenarioHelper::SINGLE);
+  gridScenario.SetBsNumber (gNbNum);
+  gridScenario.SetUtNumber (ueNum);
+  gridScenario.SetScenarioHeight (100); // Create a 3x3 scenario where the UE will
+  gridScenario.SetScenarioLength (10); // be distribuited.
+  randomStream += gridScenario.AssignStreams (randomStream);
+  gridScenario.CreateScenario ();
+
+  Ptr<NrPointToPointEpcHelper> epcHelper = CreateObject<NrPointToPointEpcHelper> ();
+  Ptr<IdealBeamformingHelper> idealBeamformingHelper = CreateObject<IdealBeamformingHelper>();
+  Ptr<NrHelper> nrHelper = CreateObject<NrHelper> ();
+
+  nrHelper->SetBeamformingHelper (idealBeamformingHelper);
+  nrHelper->SetEpcHelper (epcHelper);
+
+  BandwidthPartInfoPtrVector allBwps;
+  CcBwpCreator ccBwpCreator;
+  const uint8_t numCcPerBand = 1;
+
+  CcBwpCreator::SimpleOperationBandConf bandConfTdd (centralFrequencyBand, bandwidthBand1, numCcPerBand, BandwidthPartInfo::UMi_StreetCanyon);
+
+  bandConfTdd.m_numBwp = 1;
+
+  OperationBandInfo bandTdd = ccBwpCreator.CreateOperationBandContiguousCc (bandConfTdd);
+  // By using the configuration created, it is time to make the operation bands
+
+  Config::SetDefault ("ns3::ThreeGppChannelModel::UpdatePeriod",TimeValue (MilliSeconds (0)));
+  nrHelper->SetChannelConditionModelAttribute ("UpdatePeriod", TimeValue (MilliSeconds (0)));
+  nrHelper->SetPathlossAttribute ("ShadowingEnabled", BooleanValue (false));
+
+  nrHelper->InitializeOperationBand (&bandTdd);
+  allBwps = CcBwpCreator::GetAllBwps ({bandTdd});
+
+  idealBeamformingHelper->SetAttribute ("BeamformingMethod", TypeIdValue (DirectPathBeamforming::GetTypeId ()));
+
+  epcHelper->SetAttribute ("S1uLinkDelay", TimeValue (MilliSeconds (0)));
+
+  // Antennas for all the UEs
+  nrHelper->SetUeAntennaAttribute ("NumRows", UintegerValue (2));
+  nrHelper->SetUeAntennaAttribute ("NumColumns", UintegerValue (4));
+  nrHelper->SetUeAntennaAttribute ("AntennaElement", PointerValue (CreateObject<IsotropicAntennaModel> ()));
+
+  // Antennas for all the gNbs
+  nrHelper->SetGnbAntennaAttribute ("NumRows", UintegerValue (4));
+  nrHelper->SetGnbAntennaAttribute ("NumColumns", UintegerValue (8));
+  nrHelper->SetGnbAntennaAttribute ("AntennaElement", PointerValue (CreateObject<IsotropicAntennaModel> ()));
+
+  nrHelper->SetGnbPhyAttribute ("TxPower", DoubleValue (4.0));
+
+  uint32_t bwpIdForeMBB = 0;
+
+  nrHelper->SetGnbBwpManagerAlgorithmAttribute ("NGBR_LOW_LAT_EMBB", UintegerValue (bwpIdForeMBB));
+
+  nrHelper->SetUeBwpManagerAlgorithmAttribute ("NGBR_LOW_LAT_EMBB", UintegerValue (bwpIdForeMBB));
+
+  NetDeviceContainer enbNetDev = nrHelper->InstallGnbDevice (gridScenario.GetBaseStations (), allBwps);
+  NetDeviceContainer ueNetDev = nrHelper->InstallUeDevice (gridScenario.GetUserTerminals (), allBwps);
+
+  randomStream += nrHelper->AssignStreams (enbNetDev, randomStream);
+  randomStream += nrHelper->AssignStreams (ueNetDev, randomStream);
+  
+  for(uint16_t i = 0; i <gNbNum ; i++){
+	nrHelper->GetGnbPhy (enbNetDev.Get (i), 0)->SetAttribute ("Numerology", UintegerValue (0));
+  	//nrHelper->GetGnbPhy (enbNetDev.Get (i), 0)->SetAttribute ("Pattern", StringValue ("F|F|F|F|F|F|F|F|F|F|"));
+  	nrHelper->GetGnbPhy (enbNetDev.Get (i), 0)->SetAttribute ("TxPower", DoubleValue (4.0));
+
+  }
+
+  for (auto it = enbNetDev.Begin (); it != enbNetDev.End (); ++it)
+    {
+      DynamicCast<NrGnbNetDevice> (*it)->UpdateConfig ();
+    }
+
+  for (auto it = ueNetDev.Begin (); it != ueNetDev.End (); ++it)
+    {
+      DynamicCast<NrUeNetDevice> (*it)->UpdateConfig ();
+    }
+
+  Ptr<Node> pgw = epcHelper->GetPgwNode ();
+  NodeContainer remoteHostContainer;
+  remoteHostContainer.Create (1);
+  Ptr<Node> remoteHost = remoteHostContainer.Get (0);
+  InternetStackHelper internet;
+  internet.Install (remoteHostContainer);
+
+  PointToPointHelper p2ph;
+  p2ph.SetDeviceAttribute ("DataRate", DataRateValue (DataRate ("100Gb/s")));
+  p2ph.SetDeviceAttribute ("Mtu", UintegerValue (2500));
+  p2ph.SetChannelAttribute ("Delay", TimeValue (Seconds (0.000)));
+  NetDeviceContainer internetDevices = p2ph.Install (pgw, remoteHost);
+  Ipv4AddressHelper ipv4h;
+  Ipv4StaticRoutingHelper ipv4RoutingHelper;
+  ipv4h.SetBase ("1.0.0.0", "255.0.0.0");
+  Ipv4InterfaceContainer internetIpIfaces = ipv4h.Assign (internetDevices);
+  Ptr<Ipv4StaticRouting> remoteHostStaticRouting = ipv4RoutingHelper.GetStaticRouting (remoteHost->GetObject<Ipv4> ());
+  remoteHostStaticRouting->AddNetworkRouteTo (Ipv4Address ("7.0.0.0"), Ipv4Mask ("255.0.0.0"), 1);
+  internet.Install (gridScenario.GetUserTerminals ());
+
+  Ipv4InterfaceContainer ueIpIface = epcHelper->AssignUeIpv4Address (NetDeviceContainer (ueNetDev));
+
+  for (uint32_t j = 0; j < gridScenario.GetUserTerminals ().GetN (); ++j)
+    {
+      Ptr<Ipv4StaticRouting> ueStaticRouting = ipv4RoutingHelper.GetStaticRouting (gridScenario.GetUserTerminals ().Get (j)->GetObject<Ipv4> ());
+      ueStaticRouting->SetDefaultRoute (epcHelper->GetUeDefaultGatewayAddress (), 1);
+    }
+
+  for (uint32_t i = 0; i < ueNetDev.GetN(); ++i){
+	auto enbDev = DynamicCast<NrGnbNetDevice>(enbNetDev.Get(i));
+	auto ueDev = DynamicCast<NrUeNetDevice>(ueNetDev.Get(i));
+	NS_ASSERT(enbDev != nullptr);
+	NS_ASSERT(ueDev != nullptr);
+	nrHelper->AttachToEnb(ueDev, enbDev);
+	}
+
+
+  /*
+   * Traffic part. Install two kind of traffic: low-latency and voice, each
+   * identified by a particular source port.
+   */
+
+  
+  ApplicationContainer serverApps;
+  // The sink will always listen to the specified ports
+  UdpServerHelper PacketSinkeMBB (PorteMBB);
+
+  // The server, that is the application which is listening, is installed in the UE
+  // for the DL traffic, and in the remote host for the UL traffic
+  serverApps.Add (PacketSinkeMBB.Install (gridScenario.GetUserTerminals ()));
+  serverApps.Add (PacketSinkeMBB.Install (remoteHost));
+
+
+  /*
+   * Configure attributes for the different generators, using user-provided
+   * parameters for generating a CBR traffic
+   *
+   * Low-Latency configuration and object creation:
+   */
+  UdpClientHelper dlClienteMBB;
+  dlClienteMBB.SetAttribute ("RemotePort", UintegerValue (PorteMBB));
+  dlClienteMBB.SetAttribute ("MaxPackets", UintegerValue (0xFFFFFFFF));
+  dlClienteMBB.SetAttribute ("PacketSize", UintegerValue (embbPacketSize));
+  //dlClientVideo.SetAttribute ("Interval", TimeValue (Seconds (1.0 / lambdaVideo)));
+  
+  EpsBearer eMBBBearer (EpsBearer::NGBR_V2X);
+
+  Ptr<EpcTft> eMBBTft = Create<EpcTft> ();
+  EpcTft::PacketFilter pfeMBB;
+  pfeMBB.localPortStart = PorteMBB;
+  pfeMBB.localPortEnd = PorteMBB;
+  eMBBTft->Add (pfeMBB);
+
+  /*
+   * Let's install the applications!
+   */
+  ApplicationContainer clientApps;
+
+  for (uint32_t i = 0; i < gridScenario.GetUserTerminals ().GetN (); ++i)
+    {
+      Ptr<Node> ue = gridScenario.GetUserTerminals ().Get (i);
+      Ptr<NetDevice> ueDevice = ueNetDev.Get (i);
+      Address ueAddress = ueIpIface.GetAddress (i);
+
+      // The client, who is transmitting, is installed in the remote host,
+      // with destination address set to the address of the UE
+      dlClienteMBB.SetAttribute ("RemoteAddress", AddressValue (ueAddress));
+      clientApps.Add (dlClienteMBB.Install (remoteHost));
+
+      nrHelper->ActivateDedicatedEpsBearer(ueDevice, eMBBBearer, eMBBTft);
+     }
+
+  // start UDP server and client apps
+  serverApps.Start (MilliSeconds (eMBBStartTimeMs));
+  clientApps.Start (MilliSeconds (eMBBStartTimeMs));
+  serverApps.Stop (MilliSeconds (simTimeMs));
+  clientApps.Stop (MilliSeconds (simTimeMs));
+
+  // enable the traces provided by the nr module
+  //nrHelper->EnableTraces();
+
+
+  FlowMonitorHelper flowmonHelper;
+  NodeContainer endpointNodes;
+  endpointNodes.Add (remoteHost);
+  endpointNodes.Add (gridScenario.GetUserTerminals ());
+
+  Ptr<ns3::FlowMonitor> monitor = flowmonHelper.Install (endpointNodes);
+  monitor->SetAttribute ("DelayBinWidth", DoubleValue (0.001));
+  monitor->SetAttribute ("JitterBinWidth", DoubleValue (0.001));
+  monitor->SetAttribute ("PacketSizeBinWidth", DoubleValue (20));
+
+  Simulator::Schedule (Seconds(0.0), &ScheduleNextStateRead, envStepTime, openGym);
+
+  Simulator::Stop (MilliSeconds (simTimeMs));
+  Simulator::Run ();
+
+  /*
+   * To check what was installed in the memory, i.e., BWPs of eNb Device, and its configuration.
+   * Example is: Node 1 -> Device 0 -> BandwidthPartMap -> {0,1} BWPs -> NrGnbPhy -> Numerology,
+  GtkConfigStore config;
+  config.ConfigureAttributes ();
+  */
+
+  // Print per-flow statistics
+  monitor->CheckForLostPackets ();
+  Ptr<Ipv4FlowClassifier> classifier = DynamicCast<Ipv4FlowClassifier> (flowmonHelper.GetClassifier ());
+  FlowMonitor::FlowStatsContainer stats = monitor->GetFlowStats ();
+
+  double averageFlowThroughput = 0.0;
+  double averageFlowDelay = 0.0;
+
+
+  std::ofstream outFile;
+  std::string filename = outputDir + "/" + simTag;
+  outFile.open (filename.c_str (), std::ofstream::out | std::ofstream::trunc);
+
+  if (!outFile.is_open ())
+    {
+      std::cerr << "Can't open file " << filename << std::endl;
+      return 1;
+    }
+
+  outFile.setf (std::ios_base::fixed);
+
+  for (std::map<FlowId, FlowMonitor::FlowStats>::const_iterator i = stats.begin (); i != stats.end (); ++i)
+    {
+      Ipv4FlowClassifier::FiveTuple t = classifier->FindFlow (i->first);
+      std::stringstream protoStream;
+      protoStream << (uint16_t) t.protocol;
+      if (t.protocol == 6)
+        {
+          protoStream.str ("TCP");
+        }
+      if (t.protocol == 17)
+        {
+          protoStream.str ("UDP");
+        }
+
+      outFile << "Flow " << i->first << " (" << t.sourceAddress << ":" << t.sourcePort << " -> " << t.destinationAddress << ":" << t.destinationPort << ") proto " << protoStream.str () << "\n";
+      outFile << "  Tx Packets: " << i->second.txPackets << "\n";
+      outFile << "  Tx Bytes:   " << i->second.txBytes << "\n";
+      outFile << "  TxOffered:  " << i->second.txBytes * 8.0 / ((simTimeMs - eMBBStartTimeMs) / 1000.0) / 1000.0 / 1000.0  << " Mbps\n";
+      outFile << "  Rx Bytes:   " << i->second.rxBytes << "\n";
+
+
+      if (i->second.rxPackets > 0)
+        {
+          // Measure the duration of the flow from receiver's perspective
+          //double rxDuration = i->second.timeLastRxPacket.GetSeconds () - i->second.timeFirstTxPacket.GetSeconds ();
+          double rxDuration = (simTimeMs - eMBBStartTimeMs) / 1000.0;
+
+          averageFlowThroughput += i->second.rxBytes * 8.0 / rxDuration / 1000 / 1000;
+          averageFlowDelay += 1000 * i->second.delaySum.GetSeconds () / i->second.rxPackets;
+
+	  outFile << "  Throughput: " << i->second.rxBytes * 8.0 / rxDuration / 1000 / 1000  << " Mbps\n";
+          outFile << "  Mean delay:  " << 1000 * i->second.delaySum.GetSeconds () / i->second.rxPackets << " ms\n";
+          //outFile << "  Mean upt:  " << i->second.uptSum / i->second.rxPackets / 1000/1000 << " Mbps \n";
+          outFile << "  Mean jitter:  " << 1000 * i->second.jitterSum.GetSeconds () / i->second.rxPackets  << " ms\n";
+
+
+        }
+      else
+        {
+          outFile << "  Throughput:  0 Mbps\n";
+          outFile << "  Mean delay:  0 ms\n";
+          outFile << "  Mean jitter: 0 ms\n";
+        }
+      outFile << "  Rx Packets: " << i->second.rxPackets << "\n";
+
+    } 
+    outFile << "\n\n  Mean flow throughput: " << averageFlowThroughput / stats.size () << "\n";
+    outFile << "  Mean flow delay: " << averageFlowDelay / stats.size () << "\n";
+
+    outFile.close ();
+
+    std::ifstream f (filename.c_str ());
+
+    if (f.is_open ())
+      {
+        std::cout << f.rdbuf ();
+      }
+
+    openGym->NotifySimulationEnd();
+    Simulator::Destroy ();
+
+  return 0;
+
+
+}
