@@ -9,6 +9,9 @@ namespace ns3{
     {
     private:
         /* data */
+    public:
+        MyGym(/* args */);
+        ~MyGym();
         static TypeId GetTypeId (void);
         Ptr<OpenGymSpace> GetActionSpace();
         Ptr<OpenGymSpace> GetObservationSpace();
@@ -17,9 +20,6 @@ namespace ns3{
         bool GetGameOver(void);
         bool ExecuteActions(Ptr<OpenGymDataContainer> action);
         std::string GetExtraInfo(void);
-    public:
-        MyGym(/* args */);
-        ~MyGym();
     };
     
 }
