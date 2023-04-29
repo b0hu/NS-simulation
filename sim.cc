@@ -90,7 +90,7 @@ main (int argc, char *argv[])
   openGym->SetExecuteActionsCb( MakeCallback (&MyExecuteActions) );*/
 
   Ptr<OpenGymInterface> openGymInterface = CreateObject<OpenGymInterface> (1234);
-  Ptr<MyGymEnv> myGymEnv = CreateObject<MyGym> ();
+  Ptr<MyGym> myGymEnv = CreateObject<MyGym> ();
   myGymEnv->SetOpenGymInterface(openGymInterface);
 
   GridScenarioHelper gridScenario;
