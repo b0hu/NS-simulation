@@ -2,7 +2,6 @@
 #define MY_GYM_ENTITY_H
 
 #include "ns3/opengym-module.h"
-#include "ns3/nr-module.h"
 
 namespace ns3{
     class MyGym : public OpenGymEnv
