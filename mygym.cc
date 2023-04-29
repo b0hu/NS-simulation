@@ -19,7 +19,8 @@ namespace ns3{
         NS_LOG_FUNCTION (this);
     }
 
-    TypeId MyGym::GetTypeId (){
+    TypeId
+    MyGym::GetTypeId (){
         static TypeId tid = TypeId ("MyGym")
             .SetParent<OpenGymEnv> ()
             .SetGroupName ("OpenGym")
