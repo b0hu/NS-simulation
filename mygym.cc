@@ -20,7 +20,7 @@ namespace ns3{
     }
 
     TypeId MyGym::GetTypeId (){
-        static TypeId tid = TypeId ("MyGymEnv").SetParent<OpenGymEnv> ().SetGroupName ("OpenGym").AddConstructor<MyGymEnv> ();
+        static TypeId tid = TypeId ("MyGymEnv").SetParent<OpenGym> ().SetGroupName ("OpenGym").AddConstructor<MyGym> ();
         return tid;
     }
     /*

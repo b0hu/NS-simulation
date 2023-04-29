@@ -12,7 +12,7 @@ namespace ns3{
         TypeId GetTypeId ();
         Ptr<OpenGymSpace> GetActionSpace();
         Ptr<OpenGymSpace> GetObservationSpace();
-        Ptr<OpenGymSpace> GetObservation();
+        Ptr<OpenGymDataContainer> GetObservation();
         float GetReward(void);
         bool GetGameOver(void);
         bool ExecuteActions(Ptr<OpenGymDataContainer> action);
