@@ -31,6 +31,12 @@
 
 using namespace ns3;
 
+void ScheduleNextStateRead(double envStepTime, Ptr<OpenGymInterface> openGym)
+    {
+    Simulator::Schedule (MilliSeconds(envStepTime), &ScheduleNextStateRead, envStepTime, openGym);
+    openGym->NotifyCurrentState();
+    }
+
 NS_LOG_COMPONENT_DEFINE ("eMBB NS Simulation Test");
 
 int 
