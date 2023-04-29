@@ -3,6 +3,7 @@
 #include "ns3/core-module.h"
 #include "ns3/node-list.h"
 #include "ns3/log.h"
+
 #include <iostream>
 
 namespace ns3{
@@ -26,7 +27,7 @@ namespace ns3{
     Define observation space
     */
     Ptr<OpenGymSpace>
-    MyGym::GetObservation()
+    MyGym::GetObservationSpace()
     {
     uint32_t nodeNum = 4;
     float low = 0.0;
@@ -126,12 +127,6 @@ namespace ns3{
     Ptr<OpenGymDiscreteContainer> discrete = DynamicCast<OpenGymDiscreteContainer>(action);
     NS_LOG_UNCOND ("MyExecuteActions: " << action);
     return true;
-    }
-
-    void ScheduleNextStateRead(double envStepTime, Ptr<OpenGymInterface> openGym)
-    {
-    Simulator::Schedule (MilliSeconds(envStepTime), &ScheduleNextStateRead, envStepTime, openGym);
-    openGym->NotifyCurrentState();
     }
     
 }
