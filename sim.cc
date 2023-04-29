@@ -14,6 +14,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "mygym.h"
 #include "ns3/core-module.h"
 #include "ns3/config-store.h"
 #include "ns3/network-module.h"
@@ -31,111 +32,6 @@
 using namespace ns3;
 
 NS_LOG_COMPONENT_DEFINE ("eMBB NS Simulation Test");
-
-/*
-Define observation space
-*/
-Ptr<OpenGymSpace> MyGetObservationSpace()
-{
-  uint32_t nodeNum = 4;
-  float low = 0.0;
-  float high = 10.0;
-  std::vector<uint32_t> shape = {nodeNum,};
-  std::string dtype = TypeNameGet<uint32_t> ();
-  Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace> (low, high, shape, dtype);
-  NS_LOG_UNCOND ("MyGetObservationSpace: " << space);
-  return space;
-}
-
-/*
-Define action space
-*/
-Ptr<OpenGymSpace> MyGetActionSpace(void)
-{
-  uint32_t nodeNum = 4;
-
-  Ptr<OpenGymDiscreteSpace> space = CreateObject<OpenGymDiscreteSpace> (nodeNum);
-  NS_LOG_UNCOND ("MyGetActionSpace: " << space);
-  return space;
-}
-
-/*
-Define game over condition
-*/
-bool MyGetGameOver(void)
-{
-
-  bool isGameOver = false;
-  bool test = false;
-  static float stepCounter = 0.0;
-  stepCounter += 1;
-  if (stepCounter == 10 && test) {
-      isGameOver = true;
-  }
-  NS_LOG_UNCOND ("MyGetGameOver: " << isGameOver);
-  return isGameOver;
-}
-
-/*
-Collect observations
-*/
-Ptr<OpenGymDataContainer> MyGetObservation(void)
-{
-  uint32_t nodeNum = 4;
-  uint32_t low = 0.0;
-  uint32_t high = 10.0;
-  Ptr<UniformRandomVariable> rngInt = CreateObject<UniformRandomVariable> ();
-
-  std::vector<uint32_t> shape = {nodeNum,};
-  Ptr<OpenGymBoxContainer<uint32_t> > box = CreateObject<OpenGymBoxContainer<uint32_t> >(shape);
-
-  // generate random data
-  for (uint32_t i = 0; i<nodeNum; i++){
-    uint32_t value = rngInt->GetInteger(low, high);
-    box->AddValue(value);
-  }
-
-  NS_LOG_UNCOND ("MyGetObservation: " << box);
-  return box;
-}
-
-/*
-Define reward function
-*/
-float MyGetReward(void)
-{
-  static float reward = 0.0;
-  reward += 1;
-  return reward;
-}
-
-/*
-Define extra info. Optional
-*/
-std::string MyGetExtraInfo(void)
-{
-  std::string myInfo = "testInfo";
-  myInfo += "|123";
-  NS_LOG_UNCOND("MyGetExtraInfo: " << myInfo);
-  return myInfo;
-}
-
-
-/*
-Execute received actions
-*/
-bool MyExecuteActions(Ptr<OpenGymDataContainer> action)
-{
-  Ptr<OpenGymDiscreteContainer> discrete = DynamicCast<OpenGymDiscreteContainer>(action);
-  NS_LOG_UNCOND ("MyExecuteActions: " << action);
-  return true;
-}
-
-void ScheduleNextStateRead(double envStepTime, Ptr<OpenGymInterface> openGym)
-{
-  Simulator::Schedule (MilliSeconds(envStepTime), &ScheduleNextStateRead, envStepTime, openGym);
-  openGym->NotifyCurrentState();
-}
 
 int 
 main (int argc, char *argv[])
@@ -178,14 +74,18 @@ main (int argc, char *argv[])
   RngSeedManager::SetSeed (1);
   RngSeedManager::SetRun (simSeed);
 
-  Ptr<OpenGymInterface> openGym = CreateObject<OpenGymInterface> (1234);
+  /*Ptr<OpenGymInterface> openGym = CreateObject<OpenGymInterface> (1234);
   openGym->SetGetActionSpaceCb( MakeCallback (&MyGetActionSpace) );
   openGym->SetGetObservationSpaceCb( MakeCallback (&MyGetObservationSpace) );
   openGym->SetGetGameOverCb( MakeCallback (&MyGetGameOver) );
   openGym->SetGetObservationCb( MakeCallback (&MyGetObservation) );
   openGym->SetGetRewardCb( MakeCallback (&MyGetReward) );
   openGym->SetGetExtraInfoCb( MakeCallback (&MyGetExtraInfo) );
-  openGym->SetExecuteActionsCb( MakeCallback (&MyExecuteActions) );
+  openGym->SetExecuteActionsCb( MakeCallback (&MyExecuteActions) );*/
+
+  Ptr<OpenGymInterface> openGymInterface = CreateObject<OpenGymInterface> (1234);
+  Ptr<MyGymEnv> myGymEnv = CreateObject<MyGym> ();
+  myGymEnv->SetOpenGymInterface(openGymInterface);
 
   GridScenarioHelper gridScenario;
   gridScenario.SetRows (gNbNum / 2);
@@ -362,7 +262,7 @@ main (int argc, char *argv[])
       clientApps.Add (dlClienteMBB.Install (remoteHost));
 
       nrHelper->ActivateDedicatedEpsBearer(ueDevice, eMBBBearer, eMBBTft);
-     }
+    }
 
   // start UDP server and client apps
   serverApps.Start (MilliSeconds (eMBBStartTimeMs));
@@ -384,7 +284,7 @@ main (int argc, char *argv[])
   monitor->SetAttribute ("JitterBinWidth", DoubleValue (0.001));
   monitor->SetAttribute ("PacketSizeBinWidth", DoubleValue (20));
 
-  Simulator::Schedule (Seconds(0.0), &ScheduleNextStateRead, envStepTime, openGym);
+  Simulator::Schedule (Seconds(0.0), &ScheduleNextStateRead, envStepTime, openGymInterface);
 
   Simulator::Stop (MilliSeconds (simTimeMs));
   Simulator::Run ();
@@ -475,7 +375,7 @@ main (int argc, char *argv[])
         std::cout << f.rdbuf ();
       }
 
-    openGym->NotifySimulationEnd();
+    openGymInterface->NotifySimulationEnd();
     Simulator::Destroy ();
 
   return 0;
