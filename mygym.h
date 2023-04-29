@@ -9,7 +9,7 @@ namespace ns3{
     {
     private:
         /* data */
-        TypeId GetTypeId ();
+        static TypeId GetTypeId (void);
         Ptr<OpenGymSpace> GetActionSpace();
         Ptr<OpenGymSpace> GetObservationSpace();
         Ptr<OpenGymDataContainer> GetObservation();
