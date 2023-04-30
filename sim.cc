@@ -28,7 +28,7 @@
 #include "ns3/config-store-module.h"
 #include "ns3/antenna-module.h"
 #include "ns3/opengym-module.h"
-#include <node-list.h>
+#include "ns3/node-list.h"
 
 using namespace ns3;
 
@@ -46,7 +46,7 @@ main (int argc, char *argv[])
   NS_LOG_UNCOND ("eMBB NS Test");
 
   uint16_t gNbNum = 4;
-  uint16_t ueNum = 4;
+  uint16_t ueNum = 8;
 
   uint32_t embbPacketSize = 1000;
   uint32_t simTimeMs = 1800;
@@ -207,13 +207,14 @@ main (int argc, char *argv[])
       ueStaticRouting->SetDefaultRoute (epcHelper->GetUeDefaultGatewayAddress (), 1);
     }
 
-  for (uint32_t i = 0; i < ueNetDev.GetN(); ++i){
+  /*for (uint32_t i = 0; i < ueNetDev.GetN(); ++i){
 	auto enbDev = DynamicCast<NrGnbNetDevice>(enbNetDev.Get(i));
 	auto ueDev = DynamicCast<NrUeNetDevice>(ueNetDev.Get(i));
 	NS_ASSERT(enbDev != nullptr);
 	NS_ASSERT(ueDev != nullptr);
 	nrHelper->AttachToEnb(ueDev, enbDev);
-	}
+	}*/
+  nrHelper->AttachToClosestEnb(ueNetDev, enbNetDev);
 
 
   /*
@@ -313,6 +314,31 @@ main (int argc, char *argv[])
 
   uint32_t n_num = NodeList::GetNNodes ();
   std::cout << "node num:" << n_num << std::endl;
+  for( uint32_t i = 0 ; i < n_num ; i++){
+	 Ptr<Node> dev = NodeList::GetNode(i);
+	 Ptr<NetDevice> netdev = dev->GetDevice(0); 
+	 std::cout << i << " " << dev->GetNDevices() << std::endl;
+	 std::cout << "\t" << netdev->GetMtu() << std::endl;
+  }
+
+  for (auto it = enbNetDev.Begin (); it != enbNetDev.End (); ++it)
+    {
+      //DynamicCast<NrGnbNetDevice> (*it)->UpdateConfig ();
+      uint32_t n = DynamicCast<NrGnbNetDevice>(*it)->GetIfIndex();
+      std::cout << n << std::endl;
+    }
+  for (auto it = ueNetDev.Begin (); it != ueNetDev.End (); ++it)
+    {
+      //DynamicCast<NrGnbNetDevice> (*it)->UpdateConfig ();
+      uint16_t n = (*it)->GetMtu();
+      std::map<uint8_t,Ptr<BandwidthPartUe>> part = DynamicCast<NrUeNetDevice>(*it)->GetCcMap();
+      std::cout << n << std::endl;
+      std::cout <<  part.size() << std::endl;
+
+    }
+
+  //std::cout << ueNetDev->GetNode(0)->GetMtu() << std::endl;
+
 
 
   std::ofstream outFile;
