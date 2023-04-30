@@ -28,6 +28,7 @@
 #include "ns3/config-store-module.h"
 #include "ns3/antenna-module.h"
 #include "ns3/opengym-module.h"
+#include <node-list.h>
 
 using namespace ns3;
 
@@ -89,9 +90,9 @@ main (int argc, char *argv[])
   openGym->SetGetExtraInfoCb( MakeCallback (&MyGetExtraInfo) );
   openGym->SetExecuteActionsCb( MakeCallback (&MyExecuteActions) );*/
 
-  Ptr<OpenGymInterface> openGymInterface = CreateObject<OpenGymInterface> (1234);
+  /*Ptr<OpenGymInterface> openGymInterface = CreateObject<OpenGymInterface> (1234);
   Ptr<MyGym> myGymEnv = CreateObject<MyGym> ();
-  myGymEnv->SetOpenGymInterface(openGymInterface);
+  myGymEnv->SetOpenGymInterface(openGymInterface);*/
 
   GridScenarioHelper gridScenario;
   gridScenario.SetRows (gNbNum / 2);
@@ -290,7 +291,7 @@ main (int argc, char *argv[])
   monitor->SetAttribute ("JitterBinWidth", DoubleValue (0.001));
   monitor->SetAttribute ("PacketSizeBinWidth", DoubleValue (20));
 
-  Simulator::Schedule (Seconds(0.0), &ScheduleNextStateRead, envStepTime, openGymInterface);
+  //Simulator::Schedule (Seconds(0.0), &ScheduleNextStateRead, envStepTime, openGymInterface);
 
   Simulator::Stop (MilliSeconds (simTimeMs));
   Simulator::Run ();
@@ -309,6 +310,9 @@ main (int argc, char *argv[])
 
   double averageFlowThroughput = 0.0;
   double averageFlowDelay = 0.0;
+
+  uint32_t n_num = NodeList::GetNNodes ();
+  std::cout << "node num:" << n_num << std::endl;
 
 
   std::ofstream outFile;
@@ -381,7 +385,7 @@ main (int argc, char *argv[])
         std::cout << f.rdbuf ();
       }
 
-    openGymInterface->NotifySimulationEnd();
+    //openGymInterface->NotifySimulationEnd();
     Simulator::Destroy ();
 
   return 0;
