@@ -332,8 +332,10 @@ main (int argc, char *argv[])
       //DynamicCast<NrGnbNetDevice> (*it)->UpdateConfig ();
       uint16_t n = (*it)->GetMtu();
       std::map<uint8_t,Ptr<BandwidthPartUe>> part = DynamicCast<NrUeNetDevice>(*it)->GetCcMap();
+      Ptr< LteEnbNetDevice > target = DynamicCast<NrUeNetDevice>(*it)GetTargetEnb();
       std::cout << n << std::endl;
       std::cout <<  part.size() << std::endl;
+      std::cout <<  target->GetCellId() << std::endl;
 
     }
 
