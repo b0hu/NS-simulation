@@ -5,8 +5,8 @@
 #include "ns3/net-device-container.h"
 
 namespace ns3{
-    NetDeviceContainer enbNetDev;
-    NetDeviceContainer ueNetDev;
+    NetDeviceContainer enbNetDev = NULL;
+    NetDeviceContainer ueNetDev = NULL;
     
     class MyGym : public OpenGymEnv
     {
