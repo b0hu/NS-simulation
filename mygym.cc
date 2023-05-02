@@ -3,6 +3,7 @@
 #include "ns3/core-module.h"
 #include "ns3/node-list.h"
 #include "ns3/log.h"
+#include "ns3/nr-module.h"
 
 #include <iostream>
 
@@ -20,7 +21,7 @@ namespace ns3{
     }
 
     TypeId
-    MyGym::GetTypeId (){
+    MyGym::GetTypeId (void){
         static TypeId tid = TypeId ("MyGym")
             .SetParent<OpenGymEnv> ()
             .SetGroupName ("OpenGym")
