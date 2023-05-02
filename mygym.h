@@ -4,8 +4,6 @@
 #include "ns3/opengym-module.h"
 #include "ns3/net-device-container.h"
 namespace ns3{
-    NetDeviceContainer enbNetDev;
-    NetDeviceContainer ueNetDev;
     
     class MyGym : public OpenGymEnv
     {
@@ -22,6 +20,8 @@ namespace ns3{
         bool GetGameOver(void);
         bool ExecuteActions(Ptr<OpenGymDataContainer> action);
         std::string GetExtraInfo(void);
+        NetDeviceContainer enbNetDev;
+        NetDeviceContainer ueNetDev;
     };
     
 }
