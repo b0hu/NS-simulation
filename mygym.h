@@ -4,6 +4,9 @@
 #include "ns3/opengym-module.h"
 #include "ns3/net-device-container.h"
 namespace ns3{
+    NetDeviceContainer enbNetDev;
+    NetDeviceContainer ueNetDev
+    
     class MyGym : public OpenGymEnv
     {
     private:
