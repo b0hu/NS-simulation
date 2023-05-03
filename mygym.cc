@@ -13,6 +13,9 @@ namespace ns3{
 
     NS_OBJECT_ENSURE_REGISTERED (MyGym);
 
+    NetDeviceContainer enbNetDev;
+    NetDeviceContainer enbNetDev;
+    
     MyGym::MyGym (/* args */){
         NS_LOG_FUNCTION (this);
     }

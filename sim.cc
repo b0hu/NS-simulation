@@ -32,6 +32,9 @@
 
 using namespace ns3;
 
+extern NetDeviceContainer enbNetDev;
+extern NetDeviceContainer ueNetDev;
+
 void ScheduleNextStateRead(double envStepTime, Ptr<OpenGymInterface> openGym)
     {
     Simulator::Schedule (MilliSeconds(envStepTime), &ScheduleNextStateRead, envStepTime, openGym);
