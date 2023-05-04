@@ -13,9 +13,6 @@ namespace ns3{
 
     NS_OBJECT_ENSURE_REGISTERED (MyGym);
 
-    NetDeviceContainer enbNetDev;
-    NetDeviceContainer enbNetDev;
-    
     MyGym::MyGym (/* args */){
         NS_LOG_FUNCTION (this);
     }
@@ -38,14 +35,14 @@ namespace ns3{
     Ptr<OpenGymSpace>
     MyGym::GetObservationSpace()
     {
-    uint32_t nodeNum = 4;
-    float low = 0.0;
-    float high = 10.0;
-    std::vector<uint32_t> shape = {nodeNum,};
-    std::string dtype = TypeNameGet<uint32_t> ();
-    Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace> (low, high, shape, dtype);
-    NS_LOG_UNCOND ("MyGetObservationSpace: " << space);
-    return space;
+        uint32_t nodeNum = 4;
+        float low = 0.0;
+        float high = 10.0;
+        std::vector<uint32_t> shape = {nodeNum,};
+        std::string dtype = TypeNameGet<uint32_t> ();
+        Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace> (low, high, shape, dtype);
+        NS_LOG_UNCOND ("MyGetObservationSpace: " << space);
+        return space;
     }
 
     /*
@@ -56,9 +53,9 @@ namespace ns3{
     {
     uint32_t nodeNum = 4;
 
-    Ptr<OpenGymDiscreteSpace> space = CreateObject<OpenGymDiscreteSpace> (nodeNum);
-    NS_LOG_UNCOND ("MyGetActionSpace: " << space);
-    return space;
+        Ptr<OpenGymDiscreteSpace> space = CreateObject<OpenGymDiscreteSpace> (nodeNum);
+        NS_LOG_UNCOND ("MyGetActionSpace: " << space);
+        return space;
     }
 
     /*
@@ -68,15 +65,15 @@ namespace ns3{
     MyGym::GetGameOver(void)
     {
 
-    bool isGameOver = false;
-    bool test = false;
-    static float stepCounter = 0.0;
-    stepCounter += 1;
-    if (stepCounter == 10 && test) {
-        isGameOver = true;
-    }
-    NS_LOG_UNCOND ("MyGetGameOver: " << isGameOver);
-    return isGameOver;
+        bool isGameOver = false;
+        bool test = false;
+        static float stepCounter = 0.0;
+        stepCounter += 1;
+        if (stepCounter == 10 && test) {
+            isGameOver = true;
+        }
+        NS_LOG_UNCOND ("MyGetGameOver: " << isGameOver);
+        return isGameOver;
     }
 
     /*
@@ -85,22 +82,22 @@ namespace ns3{
     Ptr<OpenGymDataContainer>
     MyGym::GetObservation(void)
     {
-    uint32_t nodeNum = 4;
-    uint32_t low = 0.0;
-    uint32_t high = 10.0;
-    Ptr<UniformRandomVariable> rngInt = CreateObject<UniformRandomVariable> ();
+        uint32_t nodeNum = 4;
+        uint32_t low = 0.0;
+        uint32_t high = 10.0;
+        Ptr<UniformRandomVariable> rngInt = CreateObject<UniformRandomVariable> ();
 
-    std::vector<uint32_t> shape = {nodeNum,};
-    Ptr<OpenGymBoxContainer<uint32_t> > box = CreateObject<OpenGymBoxContainer<uint32_t> >(shape);
+        std::vector<uint32_t> shape = {nodeNum,};
+        Ptr<OpenGymBoxContainer<uint32_t> > box = CreateObject<OpenGymBoxContainer<uint32_t> >(shape);
 
-    // generate random data
-    for (uint32_t i = 0; i<nodeNum; i++){
-        uint32_t value = rngInt->GetInteger(low, high);
-        box->AddValue(value);
-    }
+        // generate random data
+        for (uint32_t i = 0; i<nodeNum; i++){
+            uint32_t value = rngInt->GetInteger(low, high);
+            box->AddValue(value);
+        }
 
-    NS_LOG_UNCOND ("MyGetObservation: " << box);
-    return box;
+        NS_LOG_UNCOND ("MyGetObservation: " << box);
+        return box;
     }
 
     /*
@@ -109,9 +106,9 @@ namespace ns3{
     float
     MyGym::GetReward(void)
     {
-    static float reward = 0.0;
-    reward += 1;
-    return reward;
+        static float reward = 0.0;
+        reward += 1;
+        return reward;
     }
 
     /*
@@ -120,10 +117,10 @@ namespace ns3{
     std::string
     MyGym::GetExtraInfo(void)
     {
-    std::string myInfo = "testInfo";
-    myInfo += "|123";
-    NS_LOG_UNCOND("MyGetExtraInfo: " << myInfo);
-    return myInfo;
+        std::string myInfo = "testInfo";
+        myInfo += "|123";
+        NS_LOG_UNCOND("MyGetExtraInfo: " << myInfo);
+        return myInfo;
     }
 
 
@@ -133,9 +130,9 @@ namespace ns3{
     bool
     MyGym::ExecuteActions(Ptr<OpenGymDataContainer> action)
     {
-    Ptr<OpenGymDiscreteContainer> discrete = DynamicCast<OpenGymDiscreteContainer>(action);
-    NS_LOG_UNCOND ("MyExecuteActions: " << action);
-    return true;
+        Ptr<OpenGymDiscreteContainer> discrete = DynamicCast<OpenGymDiscreteContainer>(action);
+        NS_LOG_UNCOND ("MyExecuteActions: " << action);
+        return true;
     }
     
 }
