@@ -5,13 +5,26 @@
 #include "ns3/net-device-container.h"
 
 namespace ns3{
-    //NetDeviceContainer enbNetDev;
-    //NetDeviceContainer ueNetDev;
+    extern NetDeviceContainer enbNetDev;
+    extern NetDeviceContainer ueNetDev;
+    extern uint32_t gNbNum;
+    extern uint32_t ueNum;
+
+    extern uint32_t embbPacketSize;
+    extern uint32_t simTimeMs;
+    extern uint32_t envStepTime;
+    extern uint32_t eMBBStartTimeMs;
+    extern double centralFrequencyBand;
+    extern double bandwidthBand1 ;
+    //double totalTxPower = 4;
+    extern uint16_t PorteMBB;
+    extern uint32_t simSeed;
+    extern uint32_t testArg;
 
     class MyGym : public OpenGymEnv
     {
     private:
-        /* data */
+        void ScheduleNextStateRead();
     public:
         MyGym(/* args */);
         ~MyGym();

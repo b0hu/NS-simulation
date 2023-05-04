@@ -32,16 +32,6 @@
 
 using namespace ns3;
 
-
-NetDeviceContainer enbNetDev;
-NetDeviceContainer ueNetDev;
-
-void ScheduleNextStateRead(double envStepTime, Ptr<OpenGymInterface> openGym)
-    {
-    Simulator::Schedule (MilliSeconds(envStepTime), &ScheduleNextStateRead, envStepTime, openGym);
-    openGym->NotifyCurrentState();
-    }
-
 NS_LOG_COMPONENT_DEFINE ("eMBB NS Simulation Test");
 
 int 
@@ -49,7 +39,7 @@ main (int argc, char *argv[])
 {
   NS_LOG_UNCOND ("eMBB NS Test");
 
-  uint16_t gNbNum = 4;
+  /*uint16_t gNbNum = 4;
   uint16_t ueNum = 8;
 
   uint32_t embbPacketSize = 1000;
@@ -61,7 +51,7 @@ main (int argc, char *argv[])
   //double totalTxPower = 4;
   uint16_t PorteMBB = 1234;
   uint32_t simSeed = 1;
-  uint32_t testArg = 0;
+  uint32_t testArg = 0;*/
 
   std::string simTag = "default";
   std::string outputDir = "./";
@@ -94,9 +84,9 @@ main (int argc, char *argv[])
   openGym->SetGetExtraInfoCb( MakeCallback (&MyGetExtraInfo) );
   openGym->SetExecuteActionsCb( MakeCallback (&MyExecuteActions) );*/
 
-  /*Ptr<OpenGymInterface> openGymInterface = CreateObject<OpenGymInterface> (1234);
+  Ptr<OpenGymInterface> openGymInterface = CreateObject<OpenGymInterface> (1234);
   Ptr<MyGym> myGymEnv = CreateObject<MyGym> ();
-  myGymEnv->SetOpenGymInterface(openGymInterface);*/
+  myGymEnv->SetOpenGymInterface(openGymInterface);
 
   GridScenarioHelper gridScenario;
   gridScenario.SetRows (gNbNum / 2);
@@ -160,8 +150,6 @@ main (int argc, char *argv[])
 
   nrHelper->SetUeBwpManagerAlgorithmAttribute ("NGBR_LOW_LAT_EMBB", UintegerValue (bwpIdForeMBB));
 
-  //NetDeviceContainer enbNetDev = nrHelper->InstallGnbDevice (gridScenario.GetBaseStations (), allBwps);
-  //NetDeviceContainer ueNetDev = nrHelper->InstallUeDevice (gridScenario.GetUserTerminals (), allBwps);
   enbNetDev = nrHelper->InstallGnbDevice (gridScenario.GetBaseStations (), allBwps);
   ueNetDev = nrHelper->InstallUeDevice (gridScenario.GetUserTerminals (), allBwps);
 
@@ -169,11 +157,15 @@ main (int argc, char *argv[])
   randomStream += nrHelper->AssignStreams (ueNetDev, randomStream);
   
   for(uint16_t i = 0; i <gNbNum ; i++){
-	nrHelper->GetGnbPhy (enbNetDev.Get (i), 0)->SetAttribute ("Numerology", UintegerValue (0));
+	  nrHelper->GetGnbPhy (enbNetDev.Get (i), 0)->SetAttribute ("Numerology", UintegerValue (0));
   	//nrHelper->GetGnbPhy (enbNetDev.Get (i), 0)->SetAttribute ("Pattern", StringValue ("F|F|F|F|F|F|F|F|F|F|"));
   	nrHelper->GetGnbPhy (enbNetDev.Get (i), 0)->SetAttribute ("TxPower", DoubleValue (4.0));
 
   }
+
+  /*MobilityHelper mobility;
+  mobility.SetMobilityModel("ns3::RandomWalk2dMobilityModel");
+  mobility.Install(ueNetDev);*/
 
   for (auto it = enbNetDev.Begin (); it != enbNetDev.End (); ++it)
     {
@@ -222,7 +214,6 @@ main (int argc, char *argv[])
 	}*/
   nrHelper->AttachToClosestEnb(ueNetDev, enbNetDev);
 
-
   /*
    * Traffic part. Install two kind of traffic: low-latency and voice, each
    * identified by a particular source port.
@@ -251,7 +242,7 @@ main (int argc, char *argv[])
   dlClienteMBB.SetAttribute ("PacketSize", UintegerValue (embbPacketSize));
   //dlClientVideo.SetAttribute ("Interval", TimeValue (Seconds (1.0 / lambdaVideo)));
   
-  EpsBearer eMBBBearer (EpsBearer::NGBR_V2X);
+  EpsBearer eMBBBearer (EpsBearer::NGBR_LOW_LAT_EMBB);
 
   Ptr<EpcTft> eMBBTft = Create<EpcTft> ();
   EpcTft::PacketFilter pfeMBB;
@@ -320,35 +311,38 @@ main (int argc, char *argv[])
 
   uint32_t n_num = NodeList::GetNNodes ();
   std::cout << "node num:" << n_num << std::endl;
-  for( uint32_t i = 0 ; i < n_num ; i++){
-	 Ptr<Node> dev = NodeList::GetNode(i);
-	 Ptr<NetDevice> netdev = dev->GetDevice(0); 
-	 std::cout << i << " " << dev->GetNDevices() << std::endl;
-	 std::cout << "\t" << netdev->GetMtu() << std::endl;
-  }
+  /*for( uint32_t i = 0 ; i < n_num ; i++){
+    Ptr<Node> dev = NodeList::GetNode(i);
+    for (uint32_t i = 0; i < dev->GetNDevices(); i++)
+    {
+      cout << dev.GetDevice(i)->
+    }
+    
+    //Ptr<NetDevice> netdev = dev->GetDevice(0); 
+    std::cout << i << " " << dev->GetNDevices() << std::endl;
+  }*/
 
   for (auto it = enbNetDev.Begin (); it != enbNetDev.End (); ++it)
     {
       //DynamicCast<NrGnbNetDevice> (*it)->UpdateConfig ();
-      uint32_t n = DynamicCast<NrGnbNetDevice>(*it)->GetIfIndex();
+      uint32_t n = DynamicCast<NrGnbNetDevice>(*it)->GetCellId();
       std::cout << n << std::endl;
     }
   for (auto it = ueNetDev.Begin (); it != ueNetDev.End (); ++it)
     {
       //DynamicCast<NrGnbNetDevice> (*it)->UpdateConfig ();
-      uint16_t n = (*it)->GetMtu();
+      //uint16_t n = (*it)->GetMtu();
       std::map<uint8_t,Ptr<BandwidthPartUe>> part = DynamicCast<NrUeNetDevice>(*it)->GetCcMap();
-      //Ptr <NrGnbNetDevice> target = DynamicCast<NrUeNetDevice>(*it)->GetTargetEnb();
-      std::cout << n << std::endl;
-      std::cout <<  part.size() << std::endl;
-      //std::cout <<  target->GetCellId() << std::endl;
-
+      Ptr <const NrGnbNetDevice> target = DynamicCast<NrUeNetDevice>(*it)->GetTargetEnb();
+      Ptr <Node> node = DynamicCast<NrUeNetDevice>(*it)->GetNode();
+      //std::cout << n << std::endl;
+      std::cout <<  part[0] << " " << part[1] << std::endl;
+      std::cout << "Cell id of enb " <<  target->GetCellId() << std::endl;
+      std::cout << "id of node " <<  node->GetId() << std::endl;
     }
 
   //std::cout << ueNetDev->GetNode(0)->GetMtu() << std::endl;
-
-
-
+  
   std::ofstream outFile;
   std::string filename = outputDir + "/" + simTag;
   outFile.open (filename.c_str (), std::ofstream::out | std::ofstream::trunc);

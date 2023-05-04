@@ -9,12 +9,32 @@
 
 namespace ns3{
 
+    NetDeviceContainer enbNetDev;
+    NetDeviceContainer ueNetDev;
+
+    uint32_t gNbNum = 4;
+    uint32_t ueNum = 8;
+
+    //std::unordered_map<
+
+    uint32_t embbPacketSize = 1000;
+    uint32_t simTimeMs = 1800;
+    uint32_t envStepTime = 200;
+    uint32_t eMBBStartTimeMs = 400;
+    double centralFrequencyBand = 28e9;
+    double bandwidthBand1 = 100e6;
+    //double totalTxPower = 4;
+    uint16_t PorteMBB = 1234;
+    uint32_t simSeed = 1;
+    uint32_t testArg = 0;
+
     NS_LOG_COMPONENT_DEFINE ("MyGym");
 
     NS_OBJECT_ENSURE_REGISTERED (MyGym);
 
     MyGym::MyGym (/* args */){
         NS_LOG_FUNCTION (this);
+        Simulator::Schedule (MilliSeconds(envStepTime), &MyGym::ScheduleNextStateRead,this);
     }
     MyGym::~MyGym (){
         NS_LOG_FUNCTION (this);
@@ -35,10 +55,10 @@ namespace ns3{
     Ptr<OpenGymSpace>
     MyGym::GetObservationSpace()
     {
-        uint32_t nodeNum = 4;
+        //uint32_t nodeNum = 4;
         float low = 0.0;
         float high = 10.0;
-        std::vector<uint32_t> shape = {nodeNum,};
+        std::vector<uint32_t> shape = {gNbNum,};
         std::string dtype = TypeNameGet<uint32_t> ();
         Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace> (low, high, shape, dtype);
         NS_LOG_UNCOND ("MyGetObservationSpace: " << space);
@@ -51,9 +71,7 @@ namespace ns3{
     Ptr<OpenGymSpace>
     MyGym::GetActionSpace(void)
     {
-    uint32_t nodeNum = 4;
-
-        Ptr<OpenGymDiscreteSpace> space = CreateObject<OpenGymDiscreteSpace> (nodeNum);
+        Ptr<OpenGymDiscreteSpace> space = CreateObject<OpenGymDiscreteSpace> (ueNum);
         NS_LOG_UNCOND ("MyGetActionSpace: " << space);
         return space;
     }
@@ -133,6 +151,14 @@ namespace ns3{
         Ptr<OpenGymDiscreteContainer> discrete = DynamicCast<OpenGymDiscreteContainer>(action);
         NS_LOG_UNCOND ("MyExecuteActions: " << action);
         return true;
+    }
+
+    void 
+    MyGym::ScheduleNextStateRead()
+    {
+        Simulator::Schedule (MilliSeconds(envStepTime), &MyGym::ScheduleNextStateRead,this);
+        //openGym->NotifyCurrentState();
+        Notify();
     }
     
 }
