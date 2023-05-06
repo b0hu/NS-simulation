@@ -4,6 +4,7 @@
 #include "ns3/node-list.h"
 #include "ns3/log.h"
 #include "ns3/nr-module.h"
+#include "ns3/flow-monitor-module.h"
 
 #include <iostream>
 
