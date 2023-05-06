@@ -69,8 +69,8 @@ namespace ns3{
         //Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace> (low, high, shape, dtype);
         Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace> (shape);
 
-	box->AddValue(averageFlowThroughput, averageFlowDelay)
-	NS_LOG_UNCOND ("MyGetObservationSpace: " << space);
+        box->AddValue(averageFlowThroughput, averageFlowDelay)
+        NS_LOG_UNCOND ("MyGetObservationSpace: " << space);
         return space;
     }
 
@@ -114,14 +114,16 @@ namespace ns3{
         uint32_t high = 10.0;
         Ptr<UniformRandomVariable> rngInt = CreateObject<UniformRandomVariable> ();
 
-        std::vector<uint32_t> shape = {nodeNum,};
+        std::vector<uint32_t> shape = {2,};
         Ptr<OpenGymBoxContainer<uint32_t> > box = CreateObject<OpenGymBoxContainer<uint32_t> >(shape);
 
         // generate random data
-        for (uint32_t i = 0; i<nodeNum; i++){
+        /*for (uint32_t i = 0; i<nodeNum; i++){
             uint32_t value = rngInt->GetInteger(low, high);
             box->AddValue(value);
-        }
+        }*/
+        box->AddValue(averageFlowThroughput);
+        box->AddValue(averageFlowDelay);
 
         NS_LOG_UNCOND ("MyGetObservation: " << box);
         return box;
@@ -171,12 +173,82 @@ namespace ns3{
     }
 
     void monitor(){
-// Print per-flow statistics
-  monitor->CheckForLostPackets ();
-  Ptr<Ipv4FlowClassifier> classifier = DynamicCast<Ipv4FlowClassifier> (flowmonHelper.GetClassifier ());
-  FlowMonitor::FlowStatsContainer stats = monitor->GetFlowStats ();
+        // Print per-flow statistics
+        averageFlowThroughput = 0.0;
+        averageFlowDelay = 0.0;
+
+        monitor->CheckForLostPackets ();
+        Ptr<Ipv4FlowClassifier> classifier = DynamicCast<Ipv4FlowClassifier> (flowmonHelper.GetClassifier ());
+        FlowMonitor::FlowStatsContainer stats = monitor->GetFlowStats ();
+        std::ofstream outFile;
+        std::string filename = outputDir + "/" + simTag;
+        outFile.open (filename.c_str (), std::ofstream::out | std::ofstream::trunc);
+
+        if (!outFile.is_open ())
+            {
+            std::cerr << "Can't open file " << filename << std::endl;
+            return 1;
+            }
+
+        outFile.setf (std::ios_base::fixed);
+
+        for (std::map<FlowId, FlowMonitor::FlowStats>::const_iterator i = stats.begin (); i != stats.end (); ++i)
+            {
+            Ipv4FlowClassifier::FiveTuple t = classifier->FindFlow (i->first);
+            std::stringstream protoStream;
+            protoStream << (uint16_t) t.protocol;
+            if (t.protocol == 6)
+                {
+                protoStream.str ("TCP");
+                }
+            if (t.protocol == 17)
+                {
+                protoStream.str ("UDP");
+                }
+
+            outFile << "Flow " << i->first << " (" << t.sourceAddress << ":" << t.sourcePort << " -> " << t.destinationAddress << ":" << t.destinationPort << ") proto " << protoStream.str () << "\n";
+            outFile << "  Tx Packets: " << i->second.txPackets << "\n";
+            outFile << "  Tx Bytes:   " << i->second.txBytes << "\n";
+            outFile << "  TxOffered:  " << i->second.txBytes * 8.0 / ((simTimeMs - eMBBStartTimeMs) / 1000.0) / 1000.0 / 1000.0  << " Mbps\n";
+            outFile << "  Rx Bytes:   " << i->second.rxBytes << "\n";
 
 
+            if (i->second.rxPackets > 0)
+                {
+                // Measure the duration of the flow from receiver's perspective
+                //double rxDuration = i->second.timeLastRxPacket.GetSeconds () - i->second.timeFirstTxPacket.GetSeconds ();
+                double rxDuration = (simTimeMs - eMBBStartTimeMs) / 1000.0;
+
+                averageFlowThroughput += i->second.rxBytes * 8.0 / rxDuration / 1000 / 1000;
+                averageFlowDelay += 1000 * i->second.delaySum.GetSeconds () / i->second.rxPackets;
+
+                outFile << "  Throughput: " << i->second.rxBytes * 8.0 / rxDuration / 1000 / 1000  << " Mbps\n";
+                outFile << "  Mean delay:  " << 1000 * i->second.delaySum.GetSeconds () / i->second.rxPackets << " ms\n";
+                //outFile << "  Mean upt:  " << i->second.uptSum / i->second.rxPackets / 1000/1000 << " Mbps \n";
+                outFile << "  Mean jitter:  " << 1000 * i->second.jitterSum.GetSeconds () / i->second.rxPackets  << " ms\n";
+
+
+                }
+            else
+                {
+                outFile << "  Throughput:  0 Mbps\n";
+                outFile << "  Mean delay:  0 ms\n";
+                outFile << "  Mean jitter: 0 ms\n";
+                }
+            outFile << "  Rx Packets: " << i->second.rxPackets << "\n";
+
+            } 
+            outFile << "\n\n  Mean flow throughput: " << averageFlowThroughput / stats.size () << "\n";
+            outFile << "  Mean flow delay: " << averageFlowDelay / stats.size () << "\n";
+
+            outFile.close ();
+
+            std::ifstream f (filename.c_str ());
+
+            if (f.is_open ())
+            {
+                std::cout << f.rdbuf ();
+            }
     }
     
 }
