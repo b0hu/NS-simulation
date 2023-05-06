@@ -54,8 +54,8 @@ main (int argc, char *argv[])
   uint32_t simSeed = 1;
   uint32_t testArg = 0;*/
 
-  std::string simTag = "default";
-  std::string outputDir = "./";
+  /*std::string simTag = "default";
+  std::string outputDir = "./";*/
 
   Config::SetDefault ("ns3::LteRlcUm::MaxTxBufferSize", UintegerValue (999999999));
 

@@ -35,6 +35,9 @@ namespace ns3{
     FlowMonitorHelper flowmonHelper;
     NodeContainer endpointNodes;
 
+    std::string simTag = "default";
+    std::string outputDir = "./";
+
     NS_LOG_COMPONENT_DEFINE ("MyGym");
 
     NS_OBJECT_ENSURE_REGISTERED (MyGym);

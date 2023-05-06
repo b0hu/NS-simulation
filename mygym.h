@@ -3,6 +3,7 @@
 
 #include "ns3/opengym-module.h"
 #include "ns3/net-device-container.h"
+#include "ns3/flow-monitor-module.h"
 
 namespace ns3{
     extern NetDeviceContainer enbNetDev;
@@ -26,6 +27,8 @@ namespace ns3{
 
     extern FlowMonitorHelper flowmonHelper;
     extern NodeContainer endpointNodes;
+
+    void monitor();
 
     class MyGym : public OpenGymEnv
     {
