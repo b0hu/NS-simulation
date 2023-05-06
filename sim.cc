@@ -29,6 +29,7 @@
 #include "ns3/antenna-module.h"
 #include "ns3/opengym-module.h"
 #include "ns3/node-list.h"
+#include "ns3/netanim-module.h"
 
 using namespace ns3;
 
@@ -84,22 +85,22 @@ main (int argc, char *argv[])
   openGym->SetGetExtraInfoCb( MakeCallback (&MyGetExtraInfo) );
   openGym->SetExecuteActionsCb( MakeCallback (&MyExecuteActions) );*/
 
-  Ptr<OpenGymInterface> openGymInterface = CreateObject<OpenGymInterface> (1234);
+  /*Ptr<OpenGymInterface> openGymInterface = CreateObject<OpenGymInterface> (1234);
   Ptr<MyGym> myGymEnv = CreateObject<MyGym> ();
-  myGymEnv->SetOpenGymInterface(openGymInterface);
+  myGymEnv->SetOpenGymInterface(openGymInterface);*/
 
   GridScenarioHelper gridScenario;
-  gridScenario.SetRows (gNbNum / 2);
-  gridScenario.SetColumns (gNbNum);
-  gridScenario.SetHorizontalBsDistance (5.0);
+  gridScenario.SetRows (3);
+  gridScenario.SetColumns (3);
+  gridScenario.SetHorizontalBsDistance (15.0);
   gridScenario.SetBsHeight (10.0);
   gridScenario.SetUtHeight (1.5);
   // must be set before BS number
   gridScenario.SetSectorization (GridScenarioHelper::SINGLE);
   gridScenario.SetBsNumber (gNbNum);
   gridScenario.SetUtNumber (ueNum);
-  gridScenario.SetScenarioHeight (100); // Create a 3x3 scenario where the UE will
-  gridScenario.SetScenarioLength (10); // be distribuited.
+  gridScenario.SetScenarioHeight (300); // Create a 3x3 scenario where the UE will
+  gridScenario.SetScenarioLength (300); // be distribuited.
   randomStream += gridScenario.AssignStreams (randomStream);
   gridScenario.CreateScenario ();
 
@@ -164,8 +165,8 @@ main (int argc, char *argv[])
   }
 
   /*MobilityHelper mobility;
-  mobility.SetMobilityModel("ns3::RandomWalk2dMobilityModel");
-  mobility.Install(ueNetDev);*/
+  mobility.SetMobilityModel("ns3::RandomWalk2dMobilityModel","Bounds",RectangleValue(Rectangle(0.0, 100.0, 0.0, 100.0)));
+  mobility.Install(gridScenario.GetUserTerminals());*/
 
   for (auto it = enbNetDev.Begin (); it != enbNetDev.End (); ++it)
     {
@@ -279,8 +280,8 @@ main (int argc, char *argv[])
   //nrHelper->EnableTraces();
 
 
-  FlowMonitorHelper flowmonHelper;
-  NodeContainer endpointNodes;
+  //FlowMonitorHelper flowmonHelper;
+  //NodeContainer endpointNodes;
   endpointNodes.Add (remoteHost);
   endpointNodes.Add (gridScenario.GetUserTerminals ());
 
@@ -292,6 +293,8 @@ main (int argc, char *argv[])
   //Simulator::Schedule (Seconds(0.0), &ScheduleNextStateRead, envStepTime, openGymInterface);
 
   Simulator::Stop (MilliSeconds (simTimeMs));
+
+  AnimationInterface anim("ns.xml");
   Simulator::Run ();
 
   /*
@@ -302,12 +305,12 @@ main (int argc, char *argv[])
   */
 
   // Print per-flow statistics
-  monitor->CheckForLostPackets ();
+  /*monitor->CheckForLostPackets ();
   Ptr<Ipv4FlowClassifier> classifier = DynamicCast<Ipv4FlowClassifier> (flowmonHelper.GetClassifier ());
-  FlowMonitor::FlowStatsContainer stats = monitor->GetFlowStats ();
+  FlowMonitor::FlowStatsContainer stats = monitor->GetFlowStats ();*/
 
-  double averageFlowThroughput = 0.0;
-  double averageFlowDelay = 0.0;
+  //double averageFlowThroughput = 0.0;
+  //double averageFlowDelay = 0.0;
 
   uint32_t n_num = NodeList::GetNNodes ();
   std::cout << "node num:" << n_num << std::endl;
@@ -326,6 +329,8 @@ main (int argc, char *argv[])
     {
       //DynamicCast<NrGnbNetDevice> (*it)->UpdateConfig ();
       uint32_t n = DynamicCast<NrGnbNetDevice>(*it)->GetCellId();
+      Ptr <Node> node = DynamicCast<NrGnbNetDevice>(*it)->GetNode();
+      std::cout << "id of node " <<  node->GetId() << std::endl;
       std::cout << n << std::endl;
     }
   for (auto it = ueNetDev.Begin (); it != ueNetDev.End (); ++it)
@@ -334,11 +339,11 @@ main (int argc, char *argv[])
       //uint16_t n = (*it)->GetMtu();
       std::map<uint8_t,Ptr<BandwidthPartUe>> part = DynamicCast<NrUeNetDevice>(*it)->GetCcMap();
       Ptr <const NrGnbNetDevice> target = DynamicCast<NrUeNetDevice>(*it)->GetTargetEnb();
-      Ptr <Node> node = DynamicCast<NrUeNetDevice>(*it)->GetNode();
+      //Ptr <Node> node = DynamicCast<NrUeNetDevice>(*it)->GetNode();
       //std::cout << n << std::endl;
       std::cout <<  part[0] << " " << part[1] << std::endl;
       std::cout << "Cell id of enb " <<  target->GetCellId() << std::endl;
-      std::cout << "id of node " <<  node->GetId() << std::endl;
+      //std::cout << "id of node " <<  node->GetId() << std::endl;
     }
 
   //std::cout << ueNetDev->GetNode(0)->GetMtu() << std::endl;

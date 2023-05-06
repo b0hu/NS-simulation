@@ -28,6 +28,12 @@ namespace ns3{
     uint32_t simSeed = 1;
     uint32_t testArg = 0;
 
+    double averageFlowThroughput = 0.0;
+    double averageFlowDelay = 0.0;
+
+    FlowMonitorHelper flowmonHelper;
+    NodeContainer endpointNodes;
+
     NS_LOG_COMPONENT_DEFINE ("MyGym");
 
     NS_OBJECT_ENSURE_REGISTERED (MyGym);
@@ -58,10 +64,13 @@ namespace ns3{
         //uint32_t nodeNum = 4;
         float low = 0.0;
         float high = 10.0;
-        std::vector<uint32_t> shape = {gNbNum,};
+        std::vector<uint32_t> shape = {2,};
         std::string dtype = TypeNameGet<uint32_t> ();
-        Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace> (low, high, shape, dtype);
-        NS_LOG_UNCOND ("MyGetObservationSpace: " << space);
+        //Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace> (low, high, shape, dtype);
+        Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace> (shape);
+
+	box->AddValue(averageFlowThroughput, averageFlowDelay)
+	NS_LOG_UNCOND ("MyGetObservationSpace: " << space);
         return space;
     }
 
@@ -159,6 +168,15 @@ namespace ns3{
         Simulator::Schedule (MilliSeconds(envStepTime), &MyGym::ScheduleNextStateRead,this);
         //openGym->NotifyCurrentState();
         Notify();
+    }
+
+    void monitor(){
+// Print per-flow statistics
+  monitor->CheckForLostPackets ();
+  Ptr<Ipv4FlowClassifier> classifier = DynamicCast<Ipv4FlowClassifier> (flowmonHelper.GetClassifier ());
+  FlowMonitor::FlowStatsContainer stats = monitor->GetFlowStats ();
+
+
     }
     
 }

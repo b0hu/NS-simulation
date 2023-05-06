@@ -21,6 +21,12 @@ namespace ns3{
     extern uint32_t simSeed;
     extern uint32_t testArg;
 
+    extern double averageFlowThroughput;
+    extern double averageFlowDelay;
+
+    extern FlowMonitorHelper flowmonHelper;
+    extern NodeContainer endpointNodes;
+
     class MyGym : public OpenGymEnv
     {
     private:
