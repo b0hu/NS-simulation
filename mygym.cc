@@ -73,7 +73,8 @@ namespace ns3{
         //Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace> (low, high, shape, dtype);
         Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace> (shape);
 
-        box->AddValue(averageFlowThroughput, averageFlowDelay)
+        space->AddValue(averageFlowThroughput, averageFlowDelay)
+        
         NS_LOG_UNCOND ("MyGetObservationSpace: " << space);
         return space;
     }
@@ -171,6 +172,7 @@ namespace ns3{
     void 
     MyGym::ScheduleNextStateRead()
     {
+        monitor();
         Simulator::Schedule (MilliSeconds(envStepTime), &MyGym::ScheduleNextStateRead,this);
         //openGym->NotifyCurrentState();
         Notify();
