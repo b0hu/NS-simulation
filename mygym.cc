@@ -71,7 +71,8 @@ namespace ns3{
         std::vector<uint32_t> shape = {2,};
         std::string dtype = TypeNameGet<uint32_t> ();
         //Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace> (low, high, shape, dtype);
-        Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace> (shape);
+        //Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace> (shape);
+        Ptr<OpenGymBoxContainer<uint32_t> > box = CreateObject<OpenGymBoxContainer<uint32_t> >(shape);
 
         space->AddValue(averageFlowThroughput)
         space->AddValue(averageFlowDelay)
