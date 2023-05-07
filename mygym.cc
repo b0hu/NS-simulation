@@ -63,7 +63,7 @@ namespace ns3{
     /*
     Define observation space
     */
-    Ptr<OpenGymSpace>
+    Ptr<OpenGymBoxContainer>
     MyGym::GetObservationSpace()
     {
         //uint32_t nodeNum = 4;
