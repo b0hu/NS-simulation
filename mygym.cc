@@ -69,8 +69,10 @@ namespace ns3{
         //uint32_t nodeNum = 4;
         float low = 0.0;
         float high = 1000.0;
-        std::vector<uint32_t> shape = {2,};
-        std::string dtype = TypeNameGet<uint32_t> ();
+        // std::vector<uint32_t> shape = {2,};
+        // std::string dtype = TypeNameGet<uint32_t> ();
+        std::vector<double> shape = {2,};
+        std::string dtype = TypeNameGet<double> ();
         //Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace> (low, high, shape, dtype);
         //Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace> (shape);
         Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace >(low, high, shape, dtype);
@@ -122,8 +124,11 @@ namespace ns3{
         // uint32_t high = 10.0;
         // Ptr<UniformRandomVariable> rngInt = CreateObject<UniformRandomVariable> ();
 
-        std::vector<uint32_t> shape = {2,};
-        Ptr<OpenGymBoxContainer<uint32_t> > box = CreateObject<OpenGymBoxContainer<uint32_t> >(shape);
+        // std::vector<uint32_t> shape = {2,};
+        // Ptr<OpenGymBoxContainer<uint32_t> > box = CreateObject<OpenGymBoxContainer<uint32_t> >(shape);
+
+        std::vector<double> shape = {2,};
+        Ptr<OpenGymBoxContainer<double> > box = CreateObject<OpenGymBoxContainer<double> >(shape);
 
         // generate random data
         /*for (uint32_t i = 0; i<nodeNum; i++){
