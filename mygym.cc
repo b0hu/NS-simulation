@@ -127,7 +127,7 @@ namespace ns3{
         // std::vector<uint32_t> shape = {2,};
         // Ptr<OpenGymBoxContainer<uint32_t> > box = CreateObject<OpenGymBoxContainer<uint32_t> >(shape);
 
-        std::vector<double> shape = {2,};
+        std::vector<uint32_t> shape = {2,};
         Ptr<OpenGymBoxContainer<double> > box = CreateObject<OpenGymBoxContainer<double> >(shape);
 
         // generate random data
