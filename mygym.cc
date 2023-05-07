@@ -75,8 +75,8 @@ namespace ns3{
         //Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace> (shape);
         Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace >(shape);
 
-        space->AddValue(averageFlowThroughput);
-        space->AddValue(averageFlowDelay);
+        // space->AddValue(averageFlowThroughput);
+        // space->AddValue(averageFlowDelay);
         
         NS_LOG_UNCOND ("MyGetObservationSpace: " << space);
         return space;
