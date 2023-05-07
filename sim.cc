@@ -290,7 +290,8 @@ main (int argc, char *argv[])
   endpointNodes.Add (remoteHost);
   endpointNodes.Add (gridScenario.GetUserTerminals ());
 
-  Ptr<ns3::FlowMonitor> monitor = flowmonHelper.Install (endpointNodes);
+  //Ptr<ns3::FlowMonitor> monitor = flowmonHelper.Install (endpointNodes);
+  monitor = flowmonHelper.Install (endpointNodes);
   monitor->SetAttribute ("DelayBinWidth", DoubleValue (0.001));
   monitor->SetAttribute ("JitterBinWidth", DoubleValue (0.001));
   monitor->SetAttribute ("PacketSizeBinWidth", DoubleValue (20));

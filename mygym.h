@@ -26,6 +26,7 @@ namespace ns3{
     extern double averageFlowDelay;
 
     extern FlowMonitorHelper flowmonHelper;
+    extern Ptr<ns3::FlowMonitor> monitor;
     extern NodeContainer endpointNodes;
 
     void monitor();

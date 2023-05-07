@@ -33,6 +33,7 @@ namespace ns3{
     double averageFlowDelay = 0.0;
 
     FlowMonitorHelper flowmonHelper;
+    Ptr<ns3::FlowMonitor> monitor;
     NodeContainer endpointNodes;
 
     std::string simTag = "default";
