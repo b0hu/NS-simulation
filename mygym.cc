@@ -119,7 +119,7 @@ namespace ns3{
         // uint32_t nodeNum = 4;
         // uint32_t low = 0.0;
         // uint32_t high = 10.0;
-        Ptr<UniformRandomVariable> rngInt = CreateObject<UniformRandomVariable> ();
+        // Ptr<UniformRandomVariable> rngInt = CreateObject<UniformRandomVariable> ();
 
         std::vector<uint32_t> shape = {2,};
         Ptr<OpenGymBoxContainer<uint32_t> > box = CreateObject<OpenGymBoxContainer<uint32_t> >(shape);

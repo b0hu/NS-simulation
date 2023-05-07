@@ -164,6 +164,11 @@ main (int argc, char *argv[])
 
   }
 
+  MobilityHelper enbmobility;
+  enbmobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
+  //enbmobility.SetPositionAllocator(enbPositionAlloc);
+  enbmobility.Install(gridScenario.GetBaseStations());
+
   /*MobilityHelper mobility;
   mobility.SetMobilityModel("ns3::RandomWalk2dMobilityModel","Bounds",RectangleValue(Rectangle(0.0, 100.0, 0.0, 100.0)));
   mobility.Install(gridScenario.GetUserTerminals());*/
