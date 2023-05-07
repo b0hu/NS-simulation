@@ -71,7 +71,7 @@ namespace ns3{
         float high = 1000.0;
         // std::vector<uint32_t> shape = {2,};
         // std::string dtype = TypeNameGet<uint32_t> ();
-        std::vector<double> shape = {2,};
+        std::vector<uint32_t> shape = {2,};
         std::string dtype = TypeNameGet<double> ();
         //Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace> (low, high, shape, dtype);
         //Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace> (shape);
