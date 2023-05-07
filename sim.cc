@@ -85,9 +85,9 @@ main (int argc, char *argv[])
   openGym->SetGetExtraInfoCb( MakeCallback (&MyGetExtraInfo) );
   openGym->SetExecuteActionsCb( MakeCallback (&MyExecuteActions) );*/
 
-  /*Ptr<OpenGymInterface> openGymInterface = CreateObject<OpenGymInterface> (1234);
+  Ptr<OpenGymInterface> openGymInterface = CreateObject<OpenGymInterface> (1234);
   Ptr<MyGym> myGymEnv = CreateObject<MyGym> ();
-  myGymEnv->SetOpenGymInterface(openGymInterface);*/
+  myGymEnv->SetOpenGymInterface(openGymInterface);
 
   GridScenarioHelper gridScenario;
   gridScenario.SetRows (3);
@@ -164,12 +164,12 @@ main (int argc, char *argv[])
 
   }
 
-  MobilityHelper enbmobility;
+  /*MobilityHelper enbmobility;
   enbmobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
-  //enbmobility.SetPositionAllocator(enbPositionAlloc);
+  enbmobility.SetPositionAllocator(enbPositionAlloc);
   enbmobility.Install(gridScenario.GetBaseStations());
 
-  /*MobilityHelper mobility;
+  MobilityHelper mobility;
   mobility.SetMobilityModel("ns3::RandomWalk2dMobilityModel","Bounds",RectangleValue(Rectangle(0.0, 100.0, 0.0, 100.0)));
   mobility.Install(gridScenario.GetUserTerminals());*/
 
