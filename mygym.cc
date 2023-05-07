@@ -67,13 +67,13 @@ namespace ns3{
     MyGym::GetObservationSpace()
     {
         //uint32_t nodeNum = 4;
-        // float low = 0.0;
-        // float high = 10.0;
+        float low = 0.0;
+        float high = 1000.0;
         std::vector<uint32_t> shape = {2,};
         std::string dtype = TypeNameGet<uint32_t> ();
         //Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace> (low, high, shape, dtype);
         //Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace> (shape);
-        Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace >(shape);
+        Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace >(low, high, shape, dtype);
 
         // space->AddValue(averageFlowThroughput);
         // space->AddValue(averageFlowDelay);
