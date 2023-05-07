@@ -175,7 +175,7 @@ namespace ns3{
     void 
     MyGym::ScheduleNextStateRead()
     {
-        monitor();
+        flow_monitor();
         Simulator::Schedule (MilliSeconds(envStepTime), &MyGym::ScheduleNextStateRead,this);
         //openGym->NotifyCurrentState();
         Notify();
