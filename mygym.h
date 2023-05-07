@@ -29,7 +29,7 @@ namespace ns3{
     extern Ptr<ns3::FlowMonitor> monitor;
     extern NodeContainer endpointNodes;
 
-    void monitor();
+    void flow_monitor();
 
     class MyGym : public OpenGymEnv
     {

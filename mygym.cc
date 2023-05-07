@@ -181,7 +181,7 @@ namespace ns3{
         Notify();
     }
 
-    void monitor(){
+    void flow_monitor(){
         // Print per-flow statistics
         averageFlowThroughput = 0.0;
         averageFlowDelay = 0.0;
