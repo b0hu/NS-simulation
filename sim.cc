@@ -226,14 +226,14 @@ main (int argc, char *argv[])
    */
 
   
-  ApplicationContainer serverApps;
+  // ApplicationContainer serverApps;
   // The sink will always listen to the specified ports
-  UdpServerHelper PacketSinkeMBB (PorteMBB);
+  // UdpServerHelper PacketSinkeMBB (PorteMBB);
 
   // The server, that is the application which is listening, is installed in the UE
   // for the DL traffic, and in the remote host for the UL traffic
-  serverApps.Add (PacketSinkeMBB.Install (gridScenario.GetUserTerminals ()));
-  serverApps.Add (PacketSinkeMBB.Install (remoteHost));
+  // serverApps.Add (PacketSinkeMBB.Install (gridScenario.GetUserTerminals ()));
+  // serverApps.Add (PacketSinkeMBB.Install (remoteHost));
 
 
   /*
@@ -242,11 +242,11 @@ main (int argc, char *argv[])
    *
    * Low-Latency configuration and object creation:
    */
-  UdpClientHelper dlClienteMBB;
-  dlClienteMBB.SetAttribute ("RemotePort", UintegerValue (PorteMBB));
-  dlClienteMBB.SetAttribute ("MaxPackets", UintegerValue (0xFFFFFFFF));
-  dlClienteMBB.SetAttribute ("PacketSize", UintegerValue (embbPacketSize));
-  dlClienteMBB.SetAttribute ("DataRate",StringValue ("2Mbps"));
+  // UdpClientHelper dlClienteMBB;
+  // dlClienteMBB.SetAttribute ("RemotePort", UintegerValue (PorteMBB));
+  // dlClienteMBB.SetAttribute ("MaxPackets", UintegerValue (0xFFFFFFFF));
+  // dlClienteMBB.SetAttribute ("PacketSize", UintegerValue (embbPacketSize));
+  // dlClienteMBB.SetAttribute ("DataRate",StringValue ("2Mbps"));
   //dlClientVideo.SetAttribute ("Interval", TimeValue (Seconds (1.0 / lambdaVideo)));
   
   EpsBearer eMBBBearer (EpsBearer::NGBR_LOW_LAT_EMBB);
@@ -260,7 +260,7 @@ main (int argc, char *argv[])
   /*
    * Let's install the applications!
    */
-  ApplicationContainer clientApps;
+  /*ApplicationContainer clientApps;
 
   for (uint32_t i = 0; i < gridScenario.GetUserTerminals ().GetN (); ++i)
     {
@@ -273,13 +273,9 @@ main (int argc, char *argv[])
       dlClienteMBB.SetAttribute ("RemoteAddress", AddressValue (ueAddress));
       clientApps.Add (dlClienteMBB.Install (remoteHost));
       nrHelper->ActivateDedicatedEpsBearer(ueDevice, eMBBBearer, eMBBTft);
-    }
+    }*/
 
-  /*OnOffHelper onOffHelper ("ns3::TcpSocketFactory", ueAddress, PorteMBB);
-  onOffHelper.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
-  onOffHelper.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
-  onOffHelper.SetAttribute ("DataRate",StringValue ("2Mbps"));
-  onOffHelper.SetAttribute ("PacketSize",UintegerValue(1280));
+  
 
   for (uint32_t i = 0; i < gridScenario.GetUserTerminals ().GetN (); ++i)
     {
@@ -294,7 +290,14 @@ main (int argc, char *argv[])
 
       // nrHelper->ActivateDedicatedEpsBearer(ueDevice, eMBBBearer, eMBBTft);
 
-      app    = onOffHelper.Install (ue);
+      OnOffHelper onOffHelper ("ns3::TcpSocketFactory", ueAddress, PorteMBB);
+      onOffHelper.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
+      onOffHelper.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
+      onOffHelper.SetAttribute ("DataRate",StringValue ("2Mbps"));
+      onOffHelper.SetAttribute ("PacketSize",UintegerValue(1280));
+      onOffHelper.SetAttribute ("Remote", AddressValue (InetSocketAddress (remoteHost.GetAddress (0), PorteMBB)));
+
+      ApplicationContaier app = onOffHelper.Install (ue);
       app.Start (MilliSeconds (eMBBStartTimeMs));
       app.Stop (MilliSeconds (simTimeMs));
     }
@@ -313,16 +316,16 @@ main (int argc, char *argv[])
       // nrHelper->ActivateDedicatedEpsBearer(ueDevice, eMBBBearer, eMBBTft);
       PacketSinkHelper sink ("ns3::TcpSocketFactory", ueAddress, PorteMBB);
 
-      app    = sink.Install (ue);
+      ApplicationContaier app = sink.Install (ue);
       app.Start (MilliSeconds (eMBBStartTimeMs));
       app.Stop (MilliSeconds (simTimeMs));
-    }*/
+    }
 
   // start UDP server and client apps
-  serverApps.Start (MilliSeconds (eMBBStartTimeMs));
+  /*serverApps.Start (MilliSeconds (eMBBStartTimeMs));
   clientApps.Start (MilliSeconds (eMBBStartTimeMs));
   serverApps.Stop (MilliSeconds (simTimeMs));
-  clientApps.Stop (MilliSeconds (simTimeMs));
+  clientApps.Stop (MilliSeconds (simTimeMs));*/
 
   // enable the traces provided by the nr module
   //nrHelper->EnableTraces();
