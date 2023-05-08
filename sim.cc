@@ -318,7 +318,7 @@ main (int argc, char *argv[])
       app.Stop (MilliSeconds (simTimeMs));
     }*/
 
-  start UDP server and client apps
+  // start UDP server and client apps
   serverApps.Start (MilliSeconds (eMBBStartTimeMs));
   clientApps.Start (MilliSeconds (eMBBStartTimeMs));
   serverApps.Stop (MilliSeconds (simTimeMs));
