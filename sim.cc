@@ -243,10 +243,10 @@ main (int argc, char *argv[])
    * Low-Latency configuration and object creation:
    */
   // UdpClientHelper dlClienteMBB;
-  // dlClienteMBB.SetAttribute ("RemotePort", UintegerValue (PorteMBB));
-  // dlClienteMBB.SetAttribute ("MaxPackets", UintegerValue (0xFFFFFFFF));
-  // dlClienteMBB.SetAttribute ("PacketSize", UintegerValue (embbPacketSize));
-  // dlClienteMBB.SetAttribute ("DataRate",StringValue ("2Mbps"));
+  dlClienteMBB.SetAttribute ("RemotePort", UintegerValue (PorteMBB));
+  dlClienteMBB.SetAttribute ("MaxPackets", UintegerValue (0xFFFFFFFF));
+  dlClienteMBB.SetAttribute ("PacketSize", UintegerValue (embbPacketSize));
+  dlClienteMBB.SetAttribute ("DataRate",StringValue ("2Mbps"));
   //dlClientVideo.SetAttribute ("Interval", TimeValue (Seconds (1.0 / lambdaVideo)));
   
   EpsBearer eMBBBearer (EpsBearer::NGBR_LOW_LAT_EMBB);
@@ -290,16 +290,18 @@ main (int argc, char *argv[])
 
       // nrHelper->ActivateDedicatedEpsBearer(ueDevice, eMBBBearer, eMBBTft);
 
-      OnOffHelper onOffHelper ("ns3::TcpSocketFactory", ueAddress, PorteMBB);
+      OnOffHelper onOffHelper ("ns3::TcpSocketFactory", AddressValue (ueAddress));
       onOffHelper.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
       onOffHelper.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
       onOffHelper.SetAttribute ("DataRate",StringValue ("2Mbps"));
       onOffHelper.SetAttribute ("PacketSize",UintegerValue(1280));
-      onOffHelper.SetAttribute ("Remote", InetSocketAddress (remoteHost->GetObject<Ipv4> (), PorteMBB));
+      onOffHelper.SetAttribute ("Remote", InetSocketAddress (remoteHost->GetObject<Ipv4>, PorteMBB));
 
       ApplicationContainer app = onOffHelper.Install (ue);
       app.Start (MilliSeconds (eMBBStartTimeMs));
       app.Stop (MilliSeconds (simTimeMs));
+
+      nrHelper->ActivateDedicatedEpsBearer(ueDevice, eMBBBearer, eMBBTft);
     }
   
   for (uint32_t i = 0; i < gridScenario.GetUserTerminals ().GetN (); ++i)
@@ -314,11 +316,13 @@ main (int argc, char *argv[])
       // clientApps.Add (dlClienteMBB.Install (remoteHost));
 
       // nrHelper->ActivateDedicatedEpsBearer(ueDevice, eMBBBearer, eMBBTft);
-      PacketSinkHelper sink ("ns3::TcpSocketFactory", InetSocketAddress (ueAddress, PorteMBB));
+      PacketSinkHelper sink ("ns3::TcpSocketFactory", AddressValue (ueAddress));
 
       ApplicationContainer app = sink.Install (ue);
       app.Start (MilliSeconds (eMBBStartTimeMs));
       app.Stop (MilliSeconds (simTimeMs));
+
+      nrHelper->ActivateDedicatedEpsBearer(ueDevice, eMBBBearer, eMBBTft);
     }
 
   // start UDP server and client apps
