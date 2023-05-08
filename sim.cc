@@ -295,7 +295,7 @@ main (int argc, char *argv[])
       onOffHelper.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
       onOffHelper.SetAttribute ("DataRate",StringValue ("2Mbps"));
       onOffHelper.SetAttribute ("PacketSize",UintegerValue(1280));
-      onOffHelper.SetAttribute ("Remote", Address(InetSocketAddress ((*remoteHost->GetObject<Ipv4>()), PorteMBB)));
+      onOffHelper.SetAttribute ("Remote", Address(InetSocketAddress (*(*remoteHost->GetObject<Ipv4>()), PorteMBB)));
 
       ApplicationContainer app = onOffHelper.Install (ue);
       app.Start (MilliSeconds (eMBBStartTimeMs));
