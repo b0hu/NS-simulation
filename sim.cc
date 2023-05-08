@@ -295,9 +295,9 @@ main (int argc, char *argv[])
       onOffHelper.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
       onOffHelper.SetAttribute ("DataRate",StringValue ("2Mbps"));
       onOffHelper.SetAttribute ("PacketSize",UintegerValue(1280));
-      onOffHelper.SetAttribute ("Remote", AddressValue (InetSocketAddress (remoteHost.GetAddress (0), PorteMBB)));
+      onOffHelper.SetAttribute ("Remote", AddressValue (InetSocketAddress (remoteHost->GetObject<Ipv4> (), PorteMBB)));
 
-      ApplicationContaier app = onOffHelper.Install (ue);
+      ApplicationContainer app = onOffHelper.Install (ue);
       app.Start (MilliSeconds (eMBBStartTimeMs));
       app.Stop (MilliSeconds (simTimeMs));
     }
@@ -314,9 +314,9 @@ main (int argc, char *argv[])
       // clientApps.Add (dlClienteMBB.Install (remoteHost));
 
       // nrHelper->ActivateDedicatedEpsBearer(ueDevice, eMBBBearer, eMBBTft);
-      PacketSinkHelper sink ("ns3::TcpSocketFactory", ueAddress, PorteMBB);
+      PacketSinkHelper sink ("ns3::TcpSocketFactory", InetSocketAddress (ueAddress, PorteMBB));
 
-      ApplicationContaier app = sink.Install (ue);
+      ApplicationContainer app = sink.Install (ue);
       app.Start (MilliSeconds (eMBBStartTimeMs));
       app.Stop (MilliSeconds (simTimeMs));
     }
