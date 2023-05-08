@@ -246,6 +246,7 @@ main (int argc, char *argv[])
   dlClienteMBB.SetAttribute ("RemotePort", UintegerValue (PorteMBB));
   dlClienteMBB.SetAttribute ("MaxPackets", UintegerValue (0xFFFFFFFF));
   dlClienteMBB.SetAttribute ("PacketSize", UintegerValue (embbPacketSize));
+  dlClienteMBB.SetAttribute ("DataRate",StringValue ("2Mbps"));
   //dlClientVideo.SetAttribute ("Interval", TimeValue (Seconds (1.0 / lambdaVideo)));
   
   EpsBearer eMBBBearer (EpsBearer::NGBR_LOW_LAT_EMBB);
@@ -271,11 +272,53 @@ main (int argc, char *argv[])
       // with destination address set to the address of the UE
       dlClienteMBB.SetAttribute ("RemoteAddress", AddressValue (ueAddress));
       clientApps.Add (dlClienteMBB.Install (remoteHost));
-
       nrHelper->ActivateDedicatedEpsBearer(ueDevice, eMBBBearer, eMBBTft);
     }
 
-  // start UDP server and client apps
+  /*OnOffHelper onOffHelper ("ns3::TcpSocketFactory", ueAddress, PorteMBB);
+  onOffHelper.SetAttribute ("OnTime", StringValue ("ns3::ConstantRandomVariable[Constant=1]"));
+  onOffHelper.SetAttribute ("OffTime", StringValue ("ns3::ConstantRandomVariable[Constant=0]"));
+  onOffHelper.SetAttribute ("DataRate",StringValue ("2Mbps"));
+  onOffHelper.SetAttribute ("PacketSize",UintegerValue(1280));
+
+  for (uint32_t i = 0; i < gridScenario.GetUserTerminals ().GetN (); ++i)
+    {
+      Ptr<Node> ue = gridScenario.GetUserTerminals ().Get (i);
+      Ptr<NetDevice> ueDevice = ueNetDev.Get (i);
+      Address ueAddress = ueIpIface.GetAddress (i);
+
+      // The client, who is transmitting, is installed in the remote host,
+      // with destination address set to the address of the UE
+      // dlClienteMBB.SetAttribute ("RemoteAddress", AddressValue (ueAddress));
+      // clientApps.Add (dlClienteMBB.Install (remoteHost));
+
+      // nrHelper->ActivateDedicatedEpsBearer(ueDevice, eMBBBearer, eMBBTft);
+
+      app    = onOffHelper.Install (ue);
+      app.Start (MilliSeconds (eMBBStartTimeMs));
+      app.Stop (MilliSeconds (simTimeMs));
+    }
+  
+  for (uint32_t i = 0; i < gridScenario.GetUserTerminals ().GetN (); ++i)
+    {
+      Ptr<Node> ue = gridScenario.GetUserTerminals ().Get (i);
+      Ptr<NetDevice> ueDevice = ueNetDev.Get (i);
+      Address ueAddress = ueIpIface.GetAddress (i);
+
+      // The client, who is transmitting, is installed in the remote host,
+      // with destination address set to the address of the UE
+      // dlClienteMBB.SetAttribute ("RemoteAddress", AddressValue (ueAddress));
+      // clientApps.Add (dlClienteMBB.Install (remoteHost));
+
+      // nrHelper->ActivateDedicatedEpsBearer(ueDevice, eMBBBearer, eMBBTft);
+      PacketSinkHelper sink ("ns3::TcpSocketFactory", ueAddress, PorteMBB);
+
+      app    = sink.Install (ue);
+      app.Start (MilliSeconds (eMBBStartTimeMs));
+      app.Stop (MilliSeconds (simTimeMs));
+    }*/
+
+  start UDP server and client apps
   serverApps.Start (MilliSeconds (eMBBStartTimeMs));
   clientApps.Start (MilliSeconds (eMBBStartTimeMs));
   serverApps.Stop (MilliSeconds (simTimeMs));
