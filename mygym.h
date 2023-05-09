@@ -4,7 +4,6 @@
 #include "ns3/opengym-module.h"
 #include "ns3/net-device-container.h"
 #include "ns3/flow-monitor-module.h"
-#include "ns3/nr-module.h"
 
 namespace ns3{
     extern NetDeviceContainer enbNetDev;
@@ -17,8 +16,8 @@ namespace ns3{
     
     extern uint32_t gNbNum;
     extern uint32_t ueNum;
-    extern double gNbHeight = 10.0;
-    extern double ueHeight = 1.5;
+    extern double gNbHeight;
+    extern double ueHeight;
 
     extern uint32_t embbPacketSize;
     extern uint32_t simTimeMs;
