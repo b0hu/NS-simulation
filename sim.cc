@@ -246,7 +246,7 @@ main (int argc, char *argv[])
   dlClienteMBB.SetAttribute ("RemotePort", UintegerValue (PorteMBB));
   dlClienteMBB.SetAttribute ("MaxPackets", UintegerValue (0xFFFFFFFF));
   dlClienteMBB.SetAttribute ("PacketSize", UintegerValue (embbPacketSize));
-  dlClienteMBB.SetAttribute ("DataRate",StringValue ("2Mbps"));
+  // dlClienteMBB.SetAttribute ("DataRate",StringValue ("2Mbps"));
   // dlClientVideo.SetAttribute ("Interval", TimeValue (Seconds (1.0 / lambdaVideo)));
   
   EpsBearer eMBBBearer (EpsBearer::NGBR_LOW_LAT_EMBB);
@@ -275,7 +275,6 @@ main (int argc, char *argv[])
       nrHelper->ActivateDedicatedEpsBearer(ueDevice, eMBBBearer, eMBBTft);
     }
 
-  
 
   /*for (uint32_t i = 0; i < gridScenario.GetUserTerminals ().GetN (); ++i)
     {
@@ -332,7 +331,7 @@ main (int argc, char *argv[])
   clientApps.Stop (MilliSeconds (simTimeMs));
 
   // enable the traces provided by the nr module
-  //nrHelper->EnableTraces();
+  nrHelper->EnableTraces();
 
 
   //FlowMonitorHelper flowmonHelper;
