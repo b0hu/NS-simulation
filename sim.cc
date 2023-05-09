@@ -228,7 +228,7 @@ main (int argc, char *argv[])
   
   ApplicationContainer serverApps;
   // The sink will always listen to the specified ports
-  // UdpServerHelper PacketSinkeMBB (PorteMBB);
+  UdpServerHelper PacketSinkeMBB (PorteMBB);
 
   // The server, that is the application which is listening, is installed in the UE
   // for the DL traffic, and in the remote host for the UL traffic
