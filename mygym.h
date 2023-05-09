@@ -4,6 +4,7 @@
 #include "ns3/opengym-module.h"
 #include "ns3/net-device-container.h"
 #include "ns3/flow-monitor-module.h"
+#include "ns3/nr-module.h"
 
 namespace ns3{
     extern NetDeviceContainer enbNetDev;
