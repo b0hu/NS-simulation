@@ -89,7 +89,7 @@ main (int argc, char *argv[])
   Ptr<MyGym> myGymEnv = CreateObject<MyGym> ();
   myGymEnv->SetOpenGymInterface(openGymInterface);
 
-  GridScenarioHelper gridScenario;
+  /*GridScenarioHelper gridScenario;
   gridScenario.SetRows (10);
   gridScenario.SetColumns (10);
   gridScenario.SetHorizontalBsDistance (15.0);
@@ -102,7 +102,9 @@ main (int argc, char *argv[])
   gridScenario.SetScenarioHeight (300); // Create a 3x3 scenario where the UE will
   gridScenario.SetScenarioLength (300); // be distribuited.
   randomStream += gridScenario.AssignStreams (randomStream);
-  gridScenario.CreateScenario ();
+  gridScenario.CreateScenario ();*/
+  
+  make_grid();
 
   Ptr<NrPointToPointEpcHelper> epcHelper = CreateObject<NrPointToPointEpcHelper> ();
   Ptr<IdealBeamformingHelper> idealBeamformingHelper = CreateObject<IdealBeamformingHelper>();

@@ -18,7 +18,7 @@ namespace ns3{
     uint32_t gNbNum = 4;
     uint32_t ueNum = 8;
 
-    //std::unordered_map<
+    GridScenarioHelper gridScenario;
 
     uint32_t embbPacketSize = 1000;
     uint32_t simTimeMs = 1800;
@@ -186,6 +186,22 @@ namespace ns3{
         Simulator::Schedule (MilliSeconds(envStepTime), &MyGym::ScheduleNextStateRead,this);
         //openGym->NotifyCurrentState();
         Notify();
+    }
+
+    void make_grid(){
+        gridScenario.SetRows (10);
+        gridScenario.SetColumns (10);
+        gridScenario.SetHorizontalBsDistance (15.0);
+        gridScenario.SetBsHeight (10.0);
+        gridScenario.SetUtHeight (1.5);
+        // must be set before BS number
+        gridScenario.SetSectorization (GridScenarioHelper::SINGLE);
+        gridScenario.SetBsNumber (gNbNum);
+        gridScenario.SetUtNumber (ueNum);
+        gridScenario.SetScenarioHeight (300); // Create a 3x3 scenario where the UE will
+        gridScenario.SetScenarioLength (300); // be distribuited.
+        randomStream += gridScenario.AssignStreams (randomStream);
+        gridScenario.CreateScenario ();
     }
 
     void flow_monitor(){
