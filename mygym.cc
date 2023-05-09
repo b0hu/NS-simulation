@@ -15,6 +15,8 @@ namespace ns3{
     NodeContainer gNbNodes;
     NodeContainer ueNodes;
 
+    int64_t randomStream = 1;
+
     uint32_t gNbNum = 4;
     uint32_t ueNum = 8;
 

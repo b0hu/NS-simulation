@@ -11,6 +11,8 @@ namespace ns3{
     extern NodeContainer gNbNodes;
     extern NodeContainer ueNodes;
 
+    extern int64_t randomStream;
+    
     extern uint32_t gNbNum;
     extern uint32_t ueNum;
 
