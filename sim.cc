@@ -226,14 +226,14 @@ main (int argc, char *argv[])
    */
 
   
-  // ApplicationContainer serverApps;
+  ApplicationContainer serverApps;
   // The sink will always listen to the specified ports
   // UdpServerHelper PacketSinkeMBB (PorteMBB);
 
   // The server, that is the application which is listening, is installed in the UE
   // for the DL traffic, and in the remote host for the UL traffic
-  // serverApps.Add (PacketSinkeMBB.Install (gridScenario.GetUserTerminals ()));
-  // serverApps.Add (PacketSinkeMBB.Install (remoteHost));
+  serverApps.Add (PacketSinkeMBB.Install (gridScenario.GetUserTerminals ()));
+  serverApps.Add (PacketSinkeMBB.Install (remoteHost));
 
 
   /*
@@ -242,12 +242,12 @@ main (int argc, char *argv[])
    *
    * Low-Latency configuration and object creation:
    */
-  // UdpClientHelper dlClienteMBB;
-  // dlClienteMBB.SetAttribute ("RemotePort", UintegerValue (PorteMBB));
-  // dlClienteMBB.SetAttribute ("MaxPackets", UintegerValue (0xFFFFFFFF));
-  // dlClienteMBB.SetAttribute ("PacketSize", UintegerValue (embbPacketSize));
-  // dlClienteMBB.SetAttribute ("DataRate",StringValue ("2Mbps"));
-  //dlClientVideo.SetAttribute ("Interval", TimeValue (Seconds (1.0 / lambdaVideo)));
+  UdpClientHelper dlClienteMBB;
+  dlClienteMBB.SetAttribute ("RemotePort", UintegerValue (PorteMBB));
+  dlClienteMBB.SetAttribute ("MaxPackets", UintegerValue (0xFFFFFFFF));
+  dlClienteMBB.SetAttribute ("PacketSize", UintegerValue (embbPacketSize));
+  dlClienteMBB.SetAttribute ("DataRate",StringValue ("2Mbps"));
+  // dlClientVideo.SetAttribute ("Interval", TimeValue (Seconds (1.0 / lambdaVideo)));
   
   EpsBearer eMBBBearer (EpsBearer::NGBR_LOW_LAT_EMBB);
 
@@ -260,7 +260,7 @@ main (int argc, char *argv[])
   /*
    * Let's install the applications!
    */
-  /*ApplicationContainer clientApps;
+  ApplicationContainer clientApps;
 
   for (uint32_t i = 0; i < gridScenario.GetUserTerminals ().GetN (); ++i)
     {
@@ -273,11 +273,11 @@ main (int argc, char *argv[])
       dlClienteMBB.SetAttribute ("RemoteAddress", AddressValue (ueAddress));
       clientApps.Add (dlClienteMBB.Install (remoteHost));
       nrHelper->ActivateDedicatedEpsBearer(ueDevice, eMBBBearer, eMBBTft);
-    }*/
+    }
 
   
 
-  for (uint32_t i = 0; i < gridScenario.GetUserTerminals ().GetN (); ++i)
+  /*for (uint32_t i = 0; i < gridScenario.GetUserTerminals ().GetN (); ++i)
     {
       Ptr<Node> ue = gridScenario.GetUserTerminals ().Get (i);
       Ptr<NetDevice> ueDevice = ueNetDev.Get (i);
@@ -302,9 +302,9 @@ main (int argc, char *argv[])
       app.Stop (MilliSeconds (simTimeMs));
 
       nrHelper->ActivateDedicatedEpsBearer(ueDevice, eMBBBearer, eMBBTft);
-    }
+    }*/
   
-  for (uint32_t i = 0; i < gridScenario.GetUserTerminals ().GetN (); ++i)
+  /*for (uint32_t i = 0; i < gridScenario.GetUserTerminals ().GetN (); ++i)
     {
       Ptr<Node> ue = gridScenario.GetUserTerminals ().Get (i);
       Ptr<NetDevice> ueDevice = ueNetDev.Get (i);
@@ -323,16 +323,16 @@ main (int argc, char *argv[])
       app.Stop (MilliSeconds (simTimeMs));
 
       nrHelper->ActivateDedicatedEpsBearer(ueDevice, eMBBBearer, eMBBTft);
-    }
+    }*/
 
   // start UDP server and client apps
-  /*serverApps.Start (MilliSeconds (eMBBStartTimeMs));
+  serverApps.Start (MilliSeconds (eMBBStartTimeMs));
   clientApps.Start (MilliSeconds (eMBBStartTimeMs));
   serverApps.Stop (MilliSeconds (simTimeMs));
-  clientApps.Stop (MilliSeconds (simTimeMs));*/
+  clientApps.Stop (MilliSeconds (simTimeMs));
 
   // enable the traces provided by the nr module
-  //nrHelper->EnableTraces();
+  nrHelper->EnableTraces();
 
 
   //FlowMonitorHelper flowmonHelper;
