@@ -98,7 +98,7 @@ main (int argc, char *argv[])
   {
     uint32_t x = i%2;
     uint32_t y = i/2;
-    bsPositionAlloc->Add(x * 30, y * 30, gNbHeight);
+    bsPositionAlloc->Add(Vector(x * 30, y * 30, gNbHeight));
   }
 
   enbmobility.SetPositionAllocator(bsPositionAlloc);
@@ -110,7 +110,7 @@ main (int argc, char *argv[])
   Ptr<ListPositionAllocator> uePositionAlloc = CreateObject<ListPositionAllocator>();
   for (uint32_t i = 0; i < gNbNum; i++)
   {
-    bsPositionAlloc->Add(15, 15, ueHeight);
+    bsPositionAlloc->Add(Vector(15, 15, ueHeight));
   }
   uemobility.SetPositionAllocator(uePositionAlloc);
   ueNodes.Create(ueNum);
