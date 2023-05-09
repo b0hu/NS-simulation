@@ -59,8 +59,6 @@ main (int argc, char *argv[])
 
   Config::SetDefault ("ns3::LteRlcUm::MaxTxBufferSize", UintegerValue (999999999));
 
-  int64_t randomStream = 1;
-
   CommandLine cmd;
 
   cmd.AddValue ("PorteMBB", "Port number for OpenGym env. Default: 5555", PorteMBB);
@@ -88,23 +86,45 @@ main (int argc, char *argv[])
   Ptr<OpenGymInterface> openGymInterface = CreateObject<OpenGymInterface> (1234);
   Ptr<MyGym> myGymEnv = CreateObject<MyGym> ();
   myGymEnv->SetOpenGymInterface(openGymInterface);
-
-  /*GridScenarioHelper gridScenario;
-  gridScenario.SetRows (10);
-  gridScenario.SetColumns (10);
-  gridScenario.SetHorizontalBsDistance (15.0);
-  gridScenario.SetBsHeight (10.0);
-  gridScenario.SetUtHeight (1.5);
-  // must be set before BS number
-  gridScenario.SetSectorization (GridScenarioHelper::SINGLE);
-  gridScenario.SetBsNumber (gNbNum);
-  gridScenario.SetUtNumber (ueNum);
-  gridScenario.SetScenarioHeight (300); // Create a 3x3 scenario where the UE will
-  gridScenario.SetScenarioLength (300); // be distribuited.
-  randomStream += gridScenario.AssignStreams (randomStream);
-  gridScenario.CreateScenario ();*/
   
-  make_grid();
+  // make_grid();
+
+  MobilityHelper enbmobility;
+  enbmobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
+  Ptr<ListPositionAllocator> bsPositionAlloc = CreateObject<ListPositionAllocator>();
+  // enbmobility.SetPositionAllocator("ns3::GridPositionAllocator","MinX",DoubleValue(0.0),"MinY",DoubleValue(0.0),"Min",DoubleValue(10.0),"GridWidth",UintegerValue(10),"LayoutType",StringValue("RowFirst"));
+  
+  for (uint32_t i = 0; i < gNbNum; i++)
+  {
+    uint32_t x = i%2;
+    uint32_t y = i/2;
+    bsPositionAlloc->Add(x * 30, y * 30, gNbHeight);
+  }
+
+  enbmobility.SetPositionAllocator(bsPositionAlloc);
+  gNbNodes.Create(gNbNum);
+  enbmobility.Install(gNbNodes);
+
+  MobilityHelper uemobility;
+  uemobility.SetMobilityModel("ns3::RandomWalk2dMobilityModel", "Bounds",RectangleValue(Rectangle(0.0, 30.0, 0.0, 30.0)));
+  Ptr<ListPositionAllocator> uePositionAlloc = CreateObject<ListPositionAllocator>();
+  for (uint32_t i = 0; i < gNbNum; i++)
+  {
+    bsPositionAlloc->Add(15, 15, ueHeight);
+  }
+  uemobility.SetPositionAllocator(uePositionAlloc);
+  ueNodes.Create(ueNum);
+  uemobility.Install(ueNodes);
+
+
+  /*MobilityHelper enbmobility;
+  enbmobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
+  enbmobility.SetPositionAllocator(enbPositionAlloc);
+  enbmobility.Install(gridScenario.GetBaseStations());
+
+  MobilityHelper mobility;
+  mobility.SetMobilityModel("ns3::RandomWalk2dMobilityModel","Bounds",RectangleValue(Rectangle(0.0, 100.0, 0.0, 100.0)));
+  mobility.Install(gridScenario.GetUserTerminals());*/
 
   Ptr<NrPointToPointEpcHelper> epcHelper = CreateObject<NrPointToPointEpcHelper> ();
   Ptr<IdealBeamformingHelper> idealBeamformingHelper = CreateObject<IdealBeamformingHelper>();
@@ -153,8 +173,11 @@ main (int argc, char *argv[])
 
   nrHelper->SetUeBwpManagerAlgorithmAttribute ("NGBR_LOW_LAT_EMBB", UintegerValue (bwpIdForeMBB));
 
-  enbNetDev = nrHelper->InstallGnbDevice (gridScenario.GetBaseStations (), allBwps);
-  ueNetDev = nrHelper->InstallUeDevice (gridScenario.GetUserTerminals (), allBwps);
+  // enbNetDev = nrHelper->InstallGnbDevice (gridScenario.GetBaseStations (), allBwps);
+  // ueNetDev = nrHelper->InstallUeDevice (gridScenario.GetUserTerminals (), allBwps);
+
+  enbNetDev = nrHelper->InstallGnbDevice(gNbNodes, allBwps);
+  ueNetDev = nrHelper->InstallUeDevice(ueNodes, allBwps);
 
   randomStream += nrHelper->AssignStreams (enbNetDev, randomStream);
   randomStream += nrHelper->AssignStreams (ueNetDev, randomStream);
@@ -165,15 +188,6 @@ main (int argc, char *argv[])
   	nrHelper->GetGnbPhy (enbNetDev.Get (i), 0)->SetAttribute ("TxPower", DoubleValue (4.0));
 
   }
-
-  /*MobilityHelper enbmobility;
-  enbmobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
-  enbmobility.SetPositionAllocator(enbPositionAlloc);
-  enbmobility.Install(gridScenario.GetBaseStations());
-
-  MobilityHelper mobility;
-  mobility.SetMobilityModel("ns3::RandomWalk2dMobilityModel","Bounds",RectangleValue(Rectangle(0.0, 100.0, 0.0, 100.0)));
-  mobility.Install(gridScenario.GetUserTerminals());*/
 
   for (auto it = enbNetDev.Begin (); it != enbNetDev.End (); ++it)
     {
@@ -203,13 +217,20 @@ main (int argc, char *argv[])
   Ipv4InterfaceContainer internetIpIfaces = ipv4h.Assign (internetDevices);
   Ptr<Ipv4StaticRouting> remoteHostStaticRouting = ipv4RoutingHelper.GetStaticRouting (remoteHost->GetObject<Ipv4> ());
   remoteHostStaticRouting->AddNetworkRouteTo (Ipv4Address ("7.0.0.0"), Ipv4Mask ("255.0.0.0"), 1);
-  internet.Install (gridScenario.GetUserTerminals ());
+  // internet.Install (gridScenario.GetUserTerminals ());
+  internet.Install(ueNodes);
 
   Ipv4InterfaceContainer ueIpIface = epcHelper->AssignUeIpv4Address (NetDeviceContainer (ueNetDev));
 
-  for (uint32_t j = 0; j < gridScenario.GetUserTerminals ().GetN (); ++j)
+  /*for (uint32_t j = 0; j < gridScenario.GetUserTerminals ().GetN (); ++j)
     {
       Ptr<Ipv4StaticRouting> ueStaticRouting = ipv4RoutingHelper.GetStaticRouting (gridScenario.GetUserTerminals ().Get (j)->GetObject<Ipv4> ());
+      ueStaticRouting->SetDefaultRoute (epcHelper->GetUeDefaultGatewayAddress (), 1);
+    }*/
+  
+  for (uint32_t j = 0; j < ueNodes.GetN (); ++j)
+    {
+      Ptr<Ipv4StaticRouting> ueStaticRouting = ipv4RoutingHelper.GetStaticRouting (ueNodes.Get (j)->GetObject<Ipv4> ());
       ueStaticRouting->SetDefaultRoute (epcHelper->GetUeDefaultGatewayAddress (), 1);
     }
 
@@ -234,7 +255,8 @@ main (int argc, char *argv[])
 
   // The server, that is the application which is listening, is installed in the UE
   // for the DL traffic, and in the remote host for the UL traffic
-  serverApps.Add (PacketSinkeMBB.Install (gridScenario.GetUserTerminals ()));
+  // serverApps.Add (PacketSinkeMBB.Install (gridScenario.GetUserTerminals ()));
+  serverApps.Add (PacketSinkeMBB.Install (ueNodes));
   serverApps.Add (PacketSinkeMBB.Install (remoteHost));
 
 
@@ -264,9 +286,21 @@ main (int argc, char *argv[])
    */
   ApplicationContainer clientApps;
 
-  for (uint32_t i = 0; i < gridScenario.GetUserTerminals ().GetN (); ++i)
+  /*for (uint32_t i = 0; i < gridScenario.GetUserTerminals ().GetN (); ++i)
     {
       Ptr<Node> ue = gridScenario.GetUserTerminals ().Get (i);
+      Ptr<NetDevice> ueDevice = ueNetDev.Get (i);
+      Address ueAddress = ueIpIface.GetAddress (i);
+
+      // The client, who is transmitting, is installed in the remote host,
+      // with destination address set to the address of the UE
+      dlClienteMBB.SetAttribute ("RemoteAddress", AddressValue (ueAddress));
+      clientApps.Add (dlClienteMBB.Install (remoteHost));
+      nrHelper->ActivateDedicatedEpsBearer(ueDevice, eMBBBearer, eMBBTft);
+    }*/
+  for (uint32_t i = 0; i < ueNodes.GetN (); ++i)
+    {
+      Ptr<Node> ue = ueNodes.Get (i);
       Ptr<NetDevice> ueDevice = ueNetDev.Get (i);
       Address ueAddress = ueIpIface.GetAddress (i);
 
@@ -339,7 +373,8 @@ main (int argc, char *argv[])
   //FlowMonitorHelper flowmonHelper;
   //NodeContainer endpointNodes;
   endpointNodes.Add (remoteHost);
-  endpointNodes.Add (gridScenario.GetUserTerminals ());
+  // endpointNodes.Add (gridScenario.GetUserTerminals ());
+  endpointNodes.Add (ueNodes);
 
   //Ptr<ns3::FlowMonitor> monitor = flowmonHelper.Install (endpointNodes);
   monitor = flowmonHelper.Install (endpointNodes);

@@ -11,12 +11,14 @@ namespace ns3{
     extern NetDeviceContainer ueNetDev;
     extern NodeContainer gNbNodes;
     extern NodeContainer ueNodes;
-    extern GridScenarioHelper gridScenario;
+    // extern GridScenarioHelper gridScenario;
 
     extern int64_t randomStream;
     
     extern uint32_t gNbNum;
     extern uint32_t ueNum;
+    extern double gNbHeight = 10.0;
+    extern double ueHeight = 1.5;
 
     extern uint32_t embbPacketSize;
     extern uint32_t simTimeMs;

@@ -19,6 +19,8 @@ namespace ns3{
 
     uint32_t gNbNum = 4;
     uint32_t ueNum = 8;
+    double gNbHeight = 10.0;
+    double ueHeight = 1.5;
 
     GridScenarioHelper gridScenario;
 
