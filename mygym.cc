@@ -22,8 +22,6 @@ namespace ns3{
     double gNbHeight = 10.0;
     double ueHeight = 1.5;
 
-    GridScenarioHelper gridScenario;
-
     uint32_t embbPacketSize = 1000;
     uint32_t simTimeMs = 1800;
     uint32_t envStepTime = 200;
@@ -192,7 +190,7 @@ namespace ns3{
         Notify();
     }
 
-    void make_grid(){
+    /*void make_grid(){
         gridScenario.SetRows (10);
         gridScenario.SetColumns (10);
         gridScenario.SetHorizontalBsDistance (15.0);
@@ -202,11 +200,11 @@ namespace ns3{
         gridScenario.SetSectorization (GridScenarioHelper::SINGLE);
         gridScenario.SetBsNumber (gNbNum);
         gridScenario.SetUtNumber (ueNum);
-        gridScenario.SetScenarioHeight (300); // Create a 3x3 scenario where the UE will
-        gridScenario.SetScenarioLength (300); // be distribuited.
+        gridScenario.SetScenarioHeight (500); // Create a 3x3 scenario where the UE will
+        gridScenario.SetScenarioLength (500); // be distribuited.
         randomStream += gridScenario.AssignStreams (randomStream);
         gridScenario.CreateScenario ();
-    }
+    }*/
 
     void flow_monitor(){
         // Print per-flow statistics
