@@ -10,6 +10,7 @@ namespace ns3{
     extern NetDeviceContainer ueNetDev;
     extern NodeContainer gNbNodes;
     extern NodeContainer ueNodes;
+    extern GridScenarioHelper gridScenario;
 
     extern int64_t randomStream;
     
