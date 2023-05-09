@@ -107,12 +107,12 @@ main (int argc, char *argv[])
 
   MobilityHelper uemobility;
   uemobility.SetMobilityModel("ns3::RandomWalk2dMobilityModel", "Bounds",RectangleValue(Rectangle(0.0, 30.0, 0.0, 30.0)));
-  Ptr<ListPositionAllocator> uePositionAlloc = CreateObject<ListPositionAllocator>();
-  for (uint32_t i = 0; i < gNbNum; i++)
-  {
-    bsPositionAlloc->Add(Vector(15, 15, ueHeight));
-  }
-  uemobility.SetPositionAllocator(uePositionAlloc);
+  // Ptr<ListPositionAllocator> uePositionAlloc = CreateObject<ListPositionAllocator>();
+  // for (uint32_t i = 0; i < gNbNum; i++)
+  // {
+  //   bsPositionAlloc->Add(Vector(15, 15, ueHeight));
+  // }
+  // uemobility.SetPositionAllocator(uePositionAlloc);
   ueNodes.Create(ueNum);
   uemobility.Install(ueNodes);
 
