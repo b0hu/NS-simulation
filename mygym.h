@@ -8,6 +8,9 @@
 namespace ns3{
     extern NetDeviceContainer enbNetDev;
     extern NetDeviceContainer ueNetDev;
+    extern NodeContainer gNbNodes;
+    extern NodeContainer ueNodes;
+
     extern uint32_t gNbNum;
     extern uint32_t ueNum;
 

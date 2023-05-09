@@ -90,8 +90,8 @@ main (int argc, char *argv[])
   myGymEnv->SetOpenGymInterface(openGymInterface);
 
   GridScenarioHelper gridScenario;
-  gridScenario.SetRows (3);
-  gridScenario.SetColumns (3);
+  gridScenario.SetRows (10);
+  gridScenario.SetColumns (10);
   gridScenario.SetHorizontalBsDistance (15.0);
   gridScenario.SetBsHeight (10.0);
   gridScenario.SetUtHeight (1.5);

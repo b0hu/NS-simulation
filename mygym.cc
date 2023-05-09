@@ -12,6 +12,8 @@ namespace ns3{
 
     NetDeviceContainer enbNetDev;
     NetDeviceContainer ueNetDev;
+    NodeContainer gNbNodes;
+    NodeContainer ueNodes;
 
     uint32_t gNbNum = 4;
     uint32_t ueNum = 8;
