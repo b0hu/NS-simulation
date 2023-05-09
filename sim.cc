@@ -332,7 +332,7 @@ main (int argc, char *argv[])
   clientApps.Stop (MilliSeconds (simTimeMs));
 
   // enable the traces provided by the nr module
-  nrHelper->EnableTraces();
+  //nrHelper->EnableTraces();
 
 
   //FlowMonitorHelper flowmonHelper;
