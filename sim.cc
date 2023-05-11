@@ -103,8 +103,8 @@ main (int argc, char *argv[])
   randomStream += gridScenario.AssignStreams (randomStream);
   gridScenario.CreateScenario ();
 
-  ueNodes = gridScenario.GetUserTerminals()
-  gNbNodes = gridScenario.GetBaseStations()
+  ueNodes = gridScenario.GetUserTerminals();
+  gNbNodes = gridScenario.GetBaseStations();
 
   /*MobilityHelper enbmobility;
   enbmobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
@@ -450,7 +450,7 @@ main (int argc, char *argv[])
       Ptr <const NrGnbNetDevice> target = DynamicCast<NrUeNetDevice>(*it)->GetTargetEnb();
       //Ptr <Node> node = DynamicCast<NrUeNetDevice>(*it)->GetNode();
       //std::cout << n << std::endl;
-      std::cout <<  part[0] << " " << part[1] << std::endl;
+      std::cout <<  part[0] << " " << part[1] <<" " << part[0] + 1 << std::endl;
       std::cout << "Cell id of enb " <<  target->GetCellId() << std::endl;
       //std::cout << "id of node " <<  node->GetId() << std::endl;
     }
