@@ -56,6 +56,33 @@ main (int argc, char *argv[])
 
   /*std::string simTag = "default";
   std::string outputDir = "./";*/
+  int64_t randomStream = 1;
+
+    uint32_t gNbNum = 4;
+    uint32_t ueNum = 8;
+    double gNbHeight = 10.0;
+    double ueHeight = 1.5;
+
+    uint32_t embbPacketSize = 1000;
+    uint32_t simTimeMs = 1800;
+    uint32_t envStepTime = 200;
+    uint32_t eMBBStartTimeMs = 400;
+    double centralFrequencyBand = 28e9;
+    double bandwidthBand1 = 100e6;
+    //double totalTxPower = 4;
+    uint16_t PorteMBB = 1234;
+    uint32_t simSeed = 1;
+    uint32_t testArg = 0;
+
+    double averageFlowThroughput = 0.0;
+    double averageFlowDelay = 0.0;
+
+    FlowMonitorHelper flowmonHelper;
+    Ptr<ns3::FlowMonitor> monitor;
+    NodeContainer endpointNodes;
+
+    std::string simTag = "default";
+    std::string outputDir = "./";
 
   Config::SetDefault ("ns3::LteRlcUm::MaxTxBufferSize", UintegerValue (999999999));
 
