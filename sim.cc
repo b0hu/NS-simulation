@@ -14,7 +14,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "mygym.h"
+// #include "mygym.h"
 #include "ns3/core-module.h"
 #include "ns3/config-store.h"
 #include "ns3/network-module.h"
@@ -83,9 +83,9 @@ main (int argc, char *argv[])
   openGym->SetGetExtraInfoCb( MakeCallback (&MyGetExtraInfo) );
   openGym->SetExecuteActionsCb( MakeCallback (&MyExecuteActions) );*/
 
-  Ptr<OpenGymInterface> openGymInterface = CreateObject<OpenGymInterface> (1234);
-  Ptr<MyGym> myGymEnv = CreateObject<MyGym> ();
-  myGymEnv->SetOpenGymInterface(openGymInterface);
+  // Ptr<OpenGymInterface> openGymInterface = CreateObject<OpenGymInterface> (1234);
+  // Ptr<MyGym> myGymEnv = CreateObject<MyGym> ();
+  // myGymEnv->SetOpenGymInterface(openGymInterface);
   
   // make_grid();
   GridScenarioHelper gridScenario;
@@ -186,9 +186,9 @@ main (int argc, char *argv[])
 
   uint32_t bwpIdForeMBB = 0;
 
-  nrHelper->SetGnbBwpManagerAlgorithmAttribute ("NGBR_LOW_LAT_EMBB", UintegerValue (bwpIdForeMBB));
+  // nrHelper->SetGnbBwpManagerAlgorithmAttribute ("NGBR_LOW_LAT_EMBB", UintegerValue (bwpIdForeMBB));
 
-  nrHelper->SetUeBwpManagerAlgorithmAttribute ("NGBR_LOW_LAT_EMBB", UintegerValue (bwpIdForeMBB));
+  // nrHelper->SetUeBwpManagerAlgorithmAttribute ("NGBR_LOW_LAT_EMBB", UintegerValue (bwpIdForeMBB));
 
   // enbNetDev = nrHelper->InstallGnbDevice (gridScenario.GetBaseStations (), allBwps);
   // ueNetDev = nrHelper->InstallUeDevice (gridScenario.GetUserTerminals (), allBwps);

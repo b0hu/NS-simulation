@@ -14,6 +14,9 @@ namespace ns3{
     NetDeviceContainer ueNetDev;
     NodeContainer gNbNodes;
     NodeContainer ueNodes;
+    // NodeContainer embbueNodes;
+    // NodeContainer mmtcueNodes;
+    // NodeContainer urllcueNodes;
 
     int64_t randomStream = 1;
 
