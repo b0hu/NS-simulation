@@ -27,7 +27,7 @@
 #include "ns3/nr-module.h"
 #include "ns3/config-store-module.h"
 #include "ns3/antenna-module.h"
-#include "ns3/opengym-module.h"
+// #include "ns3/opengym-module.h"
 #include "ns3/node-list.h"
 #include "ns3/netanim-module.h"
 
