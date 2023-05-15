@@ -84,6 +84,11 @@ main (int argc, char *argv[])
     std::string simTag = "default";
     std::string outputDir = "./";
 
+    NetDeviceContainer enbNetDev;
+    NetDeviceContainer ueNetDev;
+    NodeContainer gNbNodes;
+    NodeContainer ueNodes;
+
   Config::SetDefault ("ns3::LteRlcUm::MaxTxBufferSize", UintegerValue (999999999));
 
   CommandLine cmd;
