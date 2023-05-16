@@ -219,9 +219,9 @@ main (int argc, char *argv[])
 
   uint32_t bwpIdForeMBB = 0;
 
-  // nrHelper->SetGnbBwpManagerAlgorithmAttribute ("NGBR_LOW_LAT_EMBB", UintegerValue (bwpIdForeMBB));
+  nrHelper->SetGnbBwpManagerAlgorithmAttribute ("NGBR_LOW_LAT_EMBB", UintegerValue (bwpIdForeMBB));
 
-  // nrHelper->SetUeBwpManagerAlgorithmAttribute ("NGBR_LOW_LAT_EMBB", UintegerValue (bwpIdForeMBB));
+  nrHelper->SetUeBwpManagerAlgorithmAttribute ("NGBR_LOW_LAT_EMBB", UintegerValue (bwpIdForeMBB));
 
   enbNetDev = nrHelper->InstallGnbDevice(gNbNodes, allBwps);
   ueNetDev = nrHelper->InstallUeDevice(ueNodes, allBwps);
