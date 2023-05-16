@@ -119,26 +119,25 @@ main (int argc, char *argv[])
   // Ptr<MyGym> myGymEnv = CreateObject<MyGym> ();
   // myGymEnv->SetOpenGymInterface(openGymInterface);
   
-  // make_grid();
-  GridScenarioHelper gridScenario;
-  gridScenario.SetRows (10);
-  gridScenario.SetColumns (10);
-  gridScenario.SetHorizontalBsDistance (15.0);
-  gridScenario.SetBsHeight (10.0);
-  gridScenario.SetUtHeight (1.5);
+  // GridScenarioHelper gridScenario;
+  // gridScenario.SetRows (10);
+  // gridScenario.SetColumns (10);
+  // gridScenario.SetHorizontalBsDistance (15.0);
+  // gridScenario.SetBsHeight (10.0);
+  // gridScenario.SetUtHeight (1.5);
   // must be set before BS number
-  gridScenario.SetSectorization (GridScenarioHelper::SINGLE);
-  gridScenario.SetBsNumber (gNbNum);
-  gridScenario.SetUtNumber (ueNum);
-  gridScenario.SetScenarioHeight (500); // Create a 3x3 scenario where the UE will
-  gridScenario.SetScenarioLength (500); // be distribuited.
-  randomStream += gridScenario.AssignStreams (randomStream);
-  gridScenario.CreateScenario ();
+  // gridScenario.SetSectorization (GridScenarioHelper::SINGLE);
+  // gridScenario.SetBsNumber (gNbNum);
+  // gridScenario.SetUtNumber (ueNum);
+  // gridScenario.SetScenarioHeight (500); // Create a 3x3 scenario where the UE will
+  // gridScenario.SetScenarioLength (500); // be distribuited.
+  // randomStream += gridScenario.AssignStreams (randomStream);
+  // gridScenario.CreateScenario ();
 
-  ueNodes = gridScenario.GetUserTerminals();
-  gNbNodes = gridScenario.GetBaseStations();
+  // ueNodes = gridScenario.GetUserTerminals();
+  // gNbNodes = gridScenario.GetBaseStations();
 
-  /*MobilityHelper enbmobility;
+  MobilityHelper enbmobility;
   enbmobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
   Ptr<ListPositionAllocator> bsPositionAlloc = CreateObject<ListPositionAllocator>();
   // enbmobility.SetPositionAllocator("ns3::GridPositionAllocator","MinX",DoubleValue(0.0),"MinY",DoubleValue(0.0),"Min",DoubleValue(10.0),"GridWidth",UintegerValue(10),"LayoutType",StringValue("RowFirst"));
@@ -155,15 +154,15 @@ main (int argc, char *argv[])
   enbmobility.Install(gNbNodes);
 
   MobilityHelper uemobility;
+  Ptr<ListPositionAllocator> uePositionAlloc = CreateObject<ListPositionAllocator>();
+  for (uint32_t i = 0; i < gNbNum; i++)
+  {
+    bsPositionAlloc->Add(Vector(15, 15, ueHeight));
+  }
+  uemobility.SetPositionAllocator(uePositionAlloc);
   uemobility.SetMobilityModel("ns3::RandomWalk2dMobilityModel", "Bounds",RectangleValue(Rectangle(0.0, 30.0, 0.0, 30.0)));
-  // Ptr<ListPositionAllocator> uePositionAlloc = CreateObject<ListPositionAllocator>();
-  // for (uint32_t i = 0; i < gNbNum; i++)
-  // {
-  //   bsPositionAlloc->Add(Vector(15, 15, ueHeight));
-  // }
-  // uemobility.SetPositionAllocator(uePositionAlloc);
   ueNodes.Create(ueNum);
-  uemobility.Install(ueNodes);*/
+  uemobility.Install(ueNodes);
 
 
   /*MobilityHelper enbmobility;
@@ -221,9 +220,6 @@ main (int argc, char *argv[])
   // nrHelper->SetGnbBwpManagerAlgorithmAttribute ("NGBR_LOW_LAT_EMBB", UintegerValue (bwpIdForeMBB));
 
   // nrHelper->SetUeBwpManagerAlgorithmAttribute ("NGBR_LOW_LAT_EMBB", UintegerValue (bwpIdForeMBB));
-
-  // enbNetDev = nrHelper->InstallGnbDevice (gridScenario.GetBaseStations (), allBwps);
-  // ueNetDev = nrHelper->InstallUeDevice (gridScenario.GetUserTerminals (), allBwps);
 
   enbNetDev = nrHelper->InstallGnbDevice(gNbNodes, allBwps);
   ueNetDev = nrHelper->InstallUeDevice(ueNodes, allBwps);
