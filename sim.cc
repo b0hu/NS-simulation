@@ -33,6 +33,27 @@
 
 using namespace ns3;
 
+int64_t randomStream = 1;
+
+uint32_t gNbNum = 4;
+uint32_t ueNum = 8;
+double gNbHeight = 10.0;
+double ueHeight = 1.5;
+
+uint32_t embbPacketSize = 1000;
+uint32_t simTimeMs = 1800;
+uint32_t envStepTime = 200;
+uint32_t eMBBStartTimeMs = 400;
+double centralFrequencyBand = 28e9;
+double bandwidthBand1 = 100e6;
+//double totalTxPower = 4;
+uint16_t PorteMBB = 1234;
+uint32_t simSeed = 1;
+uint32_t testArg = 0;
+
+double averageFlowThroughput = 0.0;
+double averageFlowDelay = 0.0;
+
 NS_LOG_COMPONENT_DEFINE ("eMBB NS Simulation Test");
 
 int 
@@ -56,26 +77,6 @@ main (int argc, char *argv[])
 
   /*std::string simTag = "default";
   std::string outputDir = "./";*/
-  int64_t randomStream = 1;
-
-    uint32_t gNbNum = 4;
-    uint32_t ueNum = 8;
-    double gNbHeight = 10.0;
-    double ueHeight = 1.5;
-
-    uint32_t embbPacketSize = 1000;
-    uint32_t simTimeMs = 1800;
-    uint32_t envStepTime = 200;
-    uint32_t eMBBStartTimeMs = 400;
-    double centralFrequencyBand = 28e9;
-    double bandwidthBand1 = 100e6;
-    //double totalTxPower = 4;
-    uint16_t PorteMBB = 1234;
-    uint32_t simSeed = 1;
-    uint32_t testArg = 0;
-
-    double averageFlowThroughput = 0.0;
-    double averageFlowDelay = 0.0;
 
     FlowMonitorHelper flowmonHelper;
     Ptr<ns3::FlowMonitor> monitor;
@@ -124,37 +125,28 @@ main (int argc, char *argv[])
 
   MobilityHelper enbmobility;
   enbmobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
-  Ptr<ListPositionAllocator> bsPositionAlloc = CreateObject<ListPositionAllocator>();
-  // enbmobility.SetPositionAllocator("ns3::GridPositionAllocator","MinX",DoubleValue(0.0),"MinY",DoubleValue(0.0),"Min",DoubleValue(10.0),"GridWidth",UintegerValue(10),"LayoutType",StringValue("RowFirst"));
+  //Ptr<ListPositionAllocator> bsPositionAlloc = CreateObject<ListPositionAllocator>();
+  enbmobility.SetPositionAllocator("ns3::GridPositionAllocator","MinX",DoubleValue(0.0),"MinY",DoubleValue(0.0),"GridWidth",UintegerValue(30),"LayoutType",StringValue("RowFirst"));
   
-  for (uint32_t i = 0; i < gNbNum; i++)
-  {
-    uint32_t x = i%2;
-    uint32_t y = i/2;
-    bsPositionAlloc->Add(Vector(x * 30, y * 30, gNbHeight));
-  }
+  // for (uint32_t i = 0; i < gNbNum; i++)
+  // {
+  //   uint32_t x = i%2;
+  //   uint32_t y = i/2;
+  //   bsPositionAlloc->Add(Vector(x * 30, y * 30, gNbHeight));
+  // }
 
-  enbmobility.SetPositionAllocator(bsPositionAlloc);
+  //enbmobility.SetPositionAllocator(bsPositionAlloc);
   gNbNodes.Create(gNbNum);
   enbmobility.Install(gNbNodes);
 
   MobilityHelper uemobility;
   Ptr<ListPositionAllocator> uePositionAlloc = CreateObject<ListPositionAllocator>();
-  /*for (uint32_t i = 0; i < gNbNum; i++)
-  {
-    // uint32_t x = i%2;
-    // uint32_t y = i/2;
-    bsPositionAlloc->Add(Vector(10, 10, ueHeight));
-  }*/
-  // uemobility.SetPositionAllocator ("ns3::RandomRectanglePositionAllocator",
-  //                                "X", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"),
-  //                                "Y", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
+  
   uemobility.SetPositionAllocator ("ns3::RandomBoxPositionAllocator",
                                  "X", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"),
                                  "Y", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"),
                                  "Z", StringValue ("ns3::UniformRandomVariable[Min=0|Max=2]"));
-  // uemobility.SetPositionAllocator(uePositionAlloc);
-  uemobility.SetMobilityModel("ns3::RandomWalk2dMobilityModel", "Bounds",RectangleValue(Rectangle(0.0, 50.0, 0.0, 50.0)));
+  uemobility.SetMobilityModel("ns3::RandomWalk2dMobilityModel", "Bounds",RectangleValue(Rectangle(0.0, 60.0, 0.0, 60.0)));
   ueNodes.Create(ueNum);
   uemobility.Install(ueNodes);
 
