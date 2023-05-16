@@ -157,10 +157,12 @@ main (int argc, char *argv[])
   Ptr<ListPositionAllocator> uePositionAlloc = CreateObject<ListPositionAllocator>();
   for (uint32_t i = 0; i < gNbNum; i++)
   {
-    bsPositionAlloc->Add(Vector(10, 10, ueHeight));
+    uint32_t x = i%2;
+    uint32_t y = i/2;
+    bsPositionAlloc->Add(Vector(x * 10, y * 10, gNbHeight));
   }
   uemobility.SetPositionAllocator(uePositionAlloc);
-  uemobility.SetMobilityModel("ns3::RandomWalk2dMobilityModel", "Bounds",RectangleValue(Rectangle(0.0, 30.0, 0.0, 30.0)));
+  uemobility.SetMobilityModel("ns3::RandomWalk2dMobilityModel", "Bounds",RectangleValue(Rectangle(0.0, 50.0, 0.0, 50.0)));
   ueNodes.Create(ueNum);
   uemobility.Install(ueNodes);
 
