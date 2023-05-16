@@ -125,17 +125,17 @@ main (int argc, char *argv[])
 
   MobilityHelper enbmobility;
   enbmobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
-  //Ptr<ListPositionAllocator> bsPositionAlloc = CreateObject<ListPositionAllocator>();
-  enbmobility.SetPositionAllocator("ns3::GridPositionAllocator","MinX",DoubleValue(0.0),"MinY",DoubleValue(0.0),"GridWidth",UintegerValue(30),"LayoutType",StringValue("RowFirst"));
+  Ptr<ListPositionAllocator> bsPositionAlloc = CreateObject<ListPositionAllocator>();
+  //enbmobility.SetPositionAllocator("ns3::GridPositionAllocator","MinX",DoubleValue(0.0),"MinY",DoubleValue(0.0),"GridWidth",UintegerValue(30),"LayoutType",StringValue("RowFirst"));
   
-  // for (uint32_t i = 0; i < gNbNum; i++)
-  // {
-  //   uint32_t x = i%2;
-  //   uint32_t y = i/2;
-  //   bsPositionAlloc->Add(Vector(x * 30, y * 30, gNbHeight));
-  // }
+  for (uint32_t i = 0; i < gNbNum; i++)
+  {
+    uint32_t x = i%2;
+    uint32_t y = i/2;
+    bsPositionAlloc->Add(Vector(x * 30, y * 30, gNbHeight));
+  }
 
-  //enbmobility.SetPositionAllocator(bsPositionAlloc);
+  enbmobility.SetPositionAllocator(bsPositionAlloc);
   gNbNodes.Create(gNbNum);
   enbmobility.Install(gNbNodes);
 
