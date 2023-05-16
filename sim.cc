@@ -87,9 +87,10 @@ main (int argc, char *argv[])
     NetDeviceContainer enbNetDev;
     NetDeviceContainer ueNetDev;
     NodeContainer gNbNodes;
-    NodeContainer eMBBueNodes;
-    NodeContainer mMTCueNodes;
-    NodeContainer URLLCueNodes;
+    NodeContainer ueNodes;
+    // NodeContainer eMBBueNodes;
+    // NodeContainer mMTCueNodes;
+    // NodeContainer URLLCueNodes;
 
   Config::SetDefault ("ns3::LteRlcUm::MaxTxBufferSize", UintegerValue (999999999));
 
