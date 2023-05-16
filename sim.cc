@@ -165,7 +165,7 @@ main (int argc, char *argv[])
                                  "X", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"),
                                  "Y", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
   // uemobility.SetPositionAllocator(uePositionAlloc);
-  // uemobility.SetMobilityModel("ns3::RandomWalk2dMobilityModel", "Bounds",RectangleValue(Rectangle(0.0, 50.0, 0.0, 50.0)));
+  uemobility.SetMobilityModel("ns3::RandomWalk2dMobilityModel", "Bounds",RectangleValue(Rectangle(0.0, 50.0, 0.0, 50.0)));
   ueNodes.Create(ueNum);
   uemobility.Install(ueNodes);
 
