@@ -87,7 +87,9 @@ main (int argc, char *argv[])
     NetDeviceContainer enbNetDev;
     NetDeviceContainer ueNetDev;
     NodeContainer gNbNodes;
-    NodeContainer ueNodes;
+    NodeContainer eMBBueNodes;
+    NodeContainer mMTCueNodes;
+    NodeContainer URLLCueNodes;
 
   Config::SetDefault ("ns3::LteRlcUm::MaxTxBufferSize", UintegerValue (999999999));
 
@@ -118,24 +120,6 @@ main (int argc, char *argv[])
   // Ptr<OpenGymInterface> openGymInterface = CreateObject<OpenGymInterface> (1234);
   // Ptr<MyGym> myGymEnv = CreateObject<MyGym> ();
   // myGymEnv->SetOpenGymInterface(openGymInterface);
-  
-  // GridScenarioHelper gridScenario;
-  // gridScenario.SetRows (10);
-  // gridScenario.SetColumns (10);
-  // gridScenario.SetHorizontalBsDistance (15.0);
-  // gridScenario.SetBsHeight (10.0);
-  // gridScenario.SetUtHeight (1.5);
-  // must be set before BS number
-  // gridScenario.SetSectorization (GridScenarioHelper::SINGLE);
-  // gridScenario.SetBsNumber (gNbNum);
-  // gridScenario.SetUtNumber (ueNum);
-  // gridScenario.SetScenarioHeight (500); // Create a 3x3 scenario where the UE will
-  // gridScenario.SetScenarioLength (500); // be distribuited.
-  // randomStream += gridScenario.AssignStreams (randomStream);
-  // gridScenario.CreateScenario ();
-
-  // ueNodes = gridScenario.GetUserTerminals();
-  // gNbNodes = gridScenario.GetBaseStations();
 
   MobilityHelper enbmobility;
   enbmobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
@@ -213,9 +197,9 @@ main (int argc, char *argv[])
 
   uint32_t bwpIdForeMBB = 0;
 
-  nrHelper->SetGnbBwpManagerAlgorithmAttribute ("NGBR_LOW_LAT_EMBB", UintegerValue (bwpIdForeMBB));
+  // nrHelper->SetGnbBwpManagerAlgorithmAttribute ("NGBR_LOW_LAT_EMBB", UintegerValue (bwpIdForeMBB));
 
-  nrHelper->SetUeBwpManagerAlgorithmAttribute ("NGBR_LOW_LAT_EMBB", UintegerValue (bwpIdForeMBB));
+  // nrHelper->SetUeBwpManagerAlgorithmAttribute ("NGBR_LOW_LAT_EMBB", UintegerValue (bwpIdForeMBB));
 
   enbNetDev = nrHelper->InstallGnbDevice(gNbNodes, allBwps);
   ueNetDev = nrHelper->InstallUeDevice(ueNodes, allBwps);
@@ -315,6 +299,8 @@ main (int argc, char *argv[])
   // dlClientVideo.SetAttribute ("Interval", TimeValue (Seconds (1.0 / lambdaVideo)));
   
   EpsBearer eMBBBearer (EpsBearer::NGBR_LOW_LAT_EMBB);
+  EpsBearer mMTCBearer (EpsBearer::NGBR_V2X);
+  EpsBearer URLLCBearer (EpsBearer::DGBR_ELECTRICITY );
 
   Ptr<EpcTft> eMBBTft = Create<EpcTft> ();
   EpcTft::PacketFilter pfeMBB;
@@ -410,7 +396,6 @@ main (int argc, char *argv[])
   // enable the traces provided by the nr module
   nrHelper->EnableTraces();
 
-
   //FlowMonitorHelper flowmonHelper;
   //NodeContainer endpointNodes;
   endpointNodes.Add (remoteHost);
@@ -474,7 +459,7 @@ main (int argc, char *argv[])
       Ptr <const NrGnbNetDevice> target = DynamicCast<NrUeNetDevice>(*it)->GetTargetEnb();
       //Ptr <Node> node = DynamicCast<NrUeNetDevice>(*it)->GetNode();
       //std::cout << n << std::endl;
-      std::cout <<  part[0] << " " << part[1] <<" " << part[0] + 1 << std::endl;
+      std::cout <<  part[0] << " " << part[1] << std::endl;
       std::cout << "Cell id of enb " <<  target->GetCellId() << std::endl;
       //std::cout << "id of node " <<  node->GetId() << std::endl;
     }
