@@ -146,9 +146,13 @@ main (int argc, char *argv[])
     // uint32_t y = i/2;
     bsPositionAlloc->Add(Vector(10, 10, ueHeight));
   }*/
-  uemobility.SetPositionAllocator ("ns3::RandomRectanglePositionAllocator",
+  // uemobility.SetPositionAllocator ("ns3::RandomRectanglePositionAllocator",
+  //                                "X", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"),
+  //                                "Y", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
+  uemobility.SetPositionAllocator ("ns3::RandomBoxPositionAllocator",
                                  "X", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"),
-                                 "Y", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"));
+                                 "Y", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"),
+                                 "Z", StringValue ("ns3::UniformRandomVariable[Min=0|Max=2]"));
   // uemobility.SetPositionAllocator(uePositionAlloc);
   uemobility.SetMobilityModel("ns3::RandomWalk2dMobilityModel", "Bounds",RectangleValue(Rectangle(0.0, 50.0, 0.0, 50.0)));
   ueNodes.Create(ueNum);
