@@ -154,27 +154,18 @@ main (int argc, char *argv[])
   enbmobility.Install(gNbNodes);
 
   MobilityHelper uemobility;
-  // Ptr<ListPositionAllocator> uePositionAlloc = CreateObject<ListPositionAllocator>();
-  // for (uint32_t i = 0; i < gNbNum; i++)
-  // {
-  //   uint32_t x = i%2;
-  //   uint32_t y = i/2;
-  //   bsPositionAlloc->Add(Vector(x * 10, y * 10, gNbHeight));
-  // }
-  // uemobility.SetPositionAllocator(uePositionAlloc);
-  uemobility.SetMobilityModel("ns3::RandomWalk2dMobilityModel", "Bounds",RectangleValue(Rectangle(0.0, 50.0, 0.0, 50.0)));
+  Ptr<ListPositionAllocator> uePositionAlloc = CreateObject<ListPositionAllocator>();
+  for (uint32_t i = 0; i < gNbNum; i++)
+  {
+    uint32_t x = i%2;
+    uint32_t y = i/2;
+    bsPositionAlloc->Add(Vector(x * 10, y * 10, gNbHeight));
+  }
+  uemobility.SetPositionAllocator(uePositionAlloc);
+  // uemobility.SetMobilityModel("ns3::RandomWalk2dMobilityModel", "Bounds",RectangleValue(Rectangle(0.0, 50.0, 0.0, 50.0)));
   ueNodes.Create(ueNum);
   uemobility.Install(ueNodes);
 
-
-  /*MobilityHelper enbmobility;
-  enbmobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
-  enbmobility.SetPositionAllocator(enbPositionAlloc);
-  enbmobility.Install(gridScenario.GetBaseStations());
-
-  MobilityHelper mobility;
-  mobility.SetMobilityModel("ns3::RandomWalk2dMobilityModel","Bounds",RectangleValue(Rectangle(0.0, 100.0, 0.0, 100.0)));
-  mobility.Install(gridScenario.GetUserTerminals());*/
 
   Ptr<NrPointToPointEpcHelper> epcHelper = CreateObject<NrPointToPointEpcHelper> ();
   Ptr<IdealBeamformingHelper> idealBeamformingHelper = CreateObject<IdealBeamformingHelper>();
