@@ -444,9 +444,9 @@ main (int argc, char *argv[])
   */
 
   // Print per-flow statistics
-  /*monitor->CheckForLostPackets ();
+  monitor->CheckForLostPackets ();
   Ptr<Ipv4FlowClassifier> classifier = DynamicCast<Ipv4FlowClassifier> (flowmonHelper.GetClassifier ());
-  FlowMonitor::FlowStatsContainer stats = monitor->GetFlowStats ();*/
+  FlowMonitor::FlowStatsContainer stats = monitor->GetFlowStats ();
 
   //double averageFlowThroughput = 0.0;
   //double averageFlowDelay = 0.0;
