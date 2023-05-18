@@ -14,7 +14,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-// #include "mygym.h"
+#include "mygym.h"
 #include "ns3/core-module.h"
 #include "ns3/config-store.h"
 #include "ns3/network-module.h"
@@ -27,32 +27,32 @@
 #include "ns3/nr-module.h"
 #include "ns3/config-store-module.h"
 #include "ns3/antenna-module.h"
-// #include "ns3/opengym-module.h"
+ #include "ns3/opengym-module.h"
 #include "ns3/node-list.h"
 #include "ns3/netanim-module.h"
 
 using namespace ns3;
 
-int64_t randomStream = 1;
+// int64_t randomStream = 1;
 
-uint32_t gNbNum = 4;
-uint32_t ueNum = 8;
-double gNbHeight = 10.0;
-double ueHeight = 1.5;
+// uint32_t gNbNum = 4;
+// uint32_t ueNum = 8;
+// double gNbHeight = 10.0;
+// double ueHeight = 1.5;
 
-uint32_t embbPacketSize = 1000;
-uint32_t simTimeMs = 1800;
-uint32_t envStepTime = 200;
-uint32_t eMBBStartTimeMs = 400;
-double centralFrequencyBand = 28e9;
-double bandwidthBand1 = 100e6;
-//double totalTxPower = 4;
-uint16_t PorteMBB = 1234;
-uint32_t simSeed = 1;
-uint32_t testArg = 0;
+// uint32_t embbPacketSize = 1000;
+// uint32_t simTimeMs = 1800;
+// uint32_t envStepTime = 200;
+// uint32_t eMBBStartTimeMs = 400;
+// double centralFrequencyBand = 28e9;
+// double bandwidthBand1 = 100e6;
+// //double totalTxPower = 4;
+// uint16_t PorteMBB = 1234;
+// uint32_t simSeed = 1;
+// uint32_t testArg = 0;
 
-double averageFlowThroughput = 0.0;
-double averageFlowDelay = 0.0;
+// double averageFlowThroughput = 0.0;
+// double averageFlowDelay = 0.0;
 
 NS_LOG_COMPONENT_DEFINE ("eMBB NS Simulation Test");
 
@@ -60,38 +60,6 @@ int
 main (int argc, char *argv[])
 {
   NS_LOG_UNCOND ("eMBB NS Test");
-
-  /*uint16_t gNbNum = 4;
-  uint16_t ueNum = 8;
-
-  uint32_t embbPacketSize = 1000;
-  uint32_t simTimeMs = 1800;
-  uint32_t envStepTime = 200;
-  uint32_t eMBBStartTimeMs = 400;
-  double centralFrequencyBand = 28e9;
-  double bandwidthBand1 = 100e6;
-  //double totalTxPower = 4;
-  uint16_t PorteMBB = 1234;
-  uint32_t simSeed = 1;
-  uint32_t testArg = 0;*/
-
-  /*std::string simTag = "default";
-  std::string outputDir = "./";*/
-
-    FlowMonitorHelper flowmonHelper;
-    Ptr<ns3::FlowMonitor> monitor;
-    NodeContainer endpointNodes;
-
-    std::string simTag = "default";
-    std::string outputDir = "./";
-
-    NetDeviceContainer enbNetDev;
-    NetDeviceContainer ueNetDev;
-    NodeContainer gNbNodes;
-    NodeContainer ueNodes;
-    // NodeContainer eMBBueNodes;
-    // NodeContainer mMTCueNodes;
-    // NodeContainer URLLCueNodes;
 
   Config::SetDefault ("ns3::LteRlcUm::MaxTxBufferSize", UintegerValue (999999999));
 
@@ -110,18 +78,9 @@ main (int argc, char *argv[])
   RngSeedManager::SetSeed (1);
   RngSeedManager::SetRun (simSeed);
 
-  /*Ptr<OpenGymInterface> openGym = CreateObject<OpenGymInterface> (1234);
-  openGym->SetGetActionSpaceCb( MakeCallback (&MyGetActionSpace) );
-  openGym->SetGetObservationSpaceCb( MakeCallback (&MyGetObservationSpace) );
-  openGym->SetGetGameOverCb( MakeCallback (&MyGetGameOver) );
-  openGym->SetGetObservationCb( MakeCallback (&MyGetObservation) );
-  openGym->SetGetRewardCb( MakeCallback (&MyGetReward) );
-  openGym->SetGetExtraInfoCb( MakeCallback (&MyGetExtraInfo) );
-  openGym->SetExecuteActionsCb( MakeCallback (&MyExecuteActions) );*/
-
-  // Ptr<OpenGymInterface> openGymInterface = CreateObject<OpenGymInterface> (1234);
-  // Ptr<MyGym> myGymEnv = CreateObject<MyGym> ();
-  // myGymEnv->SetOpenGymInterface(openGymInterface);
+  Ptr<OpenGymInterface> openGymInterface = CreateObject<OpenGymInterface> (1234);
+  Ptr<MyGym> myGymEnv = CreateObject<MyGym> ();
+  myGymEnv->SetOpenGymInterface(openGymInterface);
 
   MobilityHelper enbmobility;
   enbmobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
@@ -132,7 +91,7 @@ main (int argc, char *argv[])
   {
     uint32_t x = i%2;
     uint32_t y = i/2;
-    bsPositionAlloc->Add(Vector(x * 30, y * 30, gNbHeight));
+    bsPositionAlloc->Add(Vector(x * 30 + 30, y * 30 + 30, gNbHeight));
   }
 
   enbmobility.SetPositionAllocator(bsPositionAlloc);
@@ -143,8 +102,8 @@ main (int argc, char *argv[])
   Ptr<ListPositionAllocator> uePositionAlloc = CreateObject<ListPositionAllocator>();
   
   uemobility.SetPositionAllocator ("ns3::RandomBoxPositionAllocator",
-                                 "X", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"),
-                                 "Y", StringValue ("ns3::UniformRandomVariable[Min=0|Max=30]"),
+                                 "X", StringValue ("ns3::UniformRandomVariable[Min=0|Max=60]"),
+                                 "Y", StringValue ("ns3::UniformRandomVariable[Min=0|Max=60]"),
                                  "Z", StringValue ("ns3::UniformRandomVariable[Min=0|Max=2]"));
   uemobility.SetMobilityModel("ns3::RandomWalk2dMobilityModel", "Bounds",RectangleValue(Rectangle(0.0, 60.0, 0.0, 60.0)));
   ueNodes.Create(ueNum);
@@ -164,7 +123,7 @@ main (int argc, char *argv[])
 
   CcBwpCreator::SimpleOperationBandConf bandConfTdd (centralFrequencyBand, bandwidthBand1, numCcPerBand, BandwidthPartInfo::UMi_StreetCanyon);
 
-  bandConfTdd.m_numBwp = 1;
+  bandConfTdd.m_numBwp = 2;
 
   OperationBandInfo bandTdd = ccBwpCreator.CreateOperationBandContiguousCc (bandConfTdd);
   // By using the configuration created, it is time to make the operation bands
@@ -239,7 +198,6 @@ main (int argc, char *argv[])
   Ipv4InterfaceContainer internetIpIfaces = ipv4h.Assign (internetDevices);
   Ptr<Ipv4StaticRouting> remoteHostStaticRouting = ipv4RoutingHelper.GetStaticRouting (remoteHost->GetObject<Ipv4> ());
   remoteHostStaticRouting->AddNetworkRouteTo (Ipv4Address ("7.0.0.0"), Ipv4Mask ("255.0.0.0"), 1);
-  // internet.Install (gridScenario.GetUserTerminals ());
   internet.Install(ueNodes);
 
   Ipv4InterfaceContainer ueIpIface = epcHelper->AssignUeIpv4Address (NetDeviceContainer (ueNetDev));
@@ -451,87 +409,84 @@ main (int argc, char *argv[])
   for (auto it = ueNetDev.Begin (); it != ueNetDev.End (); ++it)
     {
       //DynamicCast<NrGnbNetDevice> (*it)->UpdateConfig ();
-      //uint16_t n = (*it)->GetMtu();
       std::map<uint8_t,Ptr<BandwidthPartUe>> part = DynamicCast<NrUeNetDevice>(*it)->GetCcMap();
       Ptr <const NrGnbNetDevice> target = DynamicCast<NrUeNetDevice>(*it)->GetTargetEnb();
       //Ptr <Node> node = DynamicCast<NrUeNetDevice>(*it)->GetNode();
-      //std::cout << n << std::endl;
       std::cout <<  part[0] << " " << part[1] << std::endl;
+      // Ptr <BandwidthPartUe> uemap = part[1];
       std::cout << "Cell id of enb " <<  target->GetCellId() << std::endl;
       //std::cout << "id of node " <<  node->GetId() << std::endl;
     }
-
-  //std::cout << ueNetDev->GetNode(0)->GetMtu() << std::endl;
   
-  std::ofstream outFile;
-  std::string filename = outputDir + "/" + simTag;
-  outFile.open (filename.c_str (), std::ofstream::out | std::ofstream::trunc);
+  // std::ofstream outFile;
+  // std::string filename = outputDir + "/" + simTag;
+  // outFile.open (filename.c_str (), std::ofstream::out | std::ofstream::trunc);
 
-  if (!outFile.is_open ())
-    {
-      std::cerr << "Can't open file " << filename << std::endl;
-      return 1;
-    }
+  // if (!outFile.is_open ())
+  //   {
+  //     std::cerr << "Can't open file " << filename << std::endl;
+  //     return 1;
+  //   }
 
-  outFile.setf (std::ios_base::fixed);
+  // outFile.setf (std::ios_base::fixed);
 
-  for (std::map<FlowId, FlowMonitor::FlowStats>::const_iterator i = stats.begin (); i != stats.end (); ++i)
-    {
-      Ipv4FlowClassifier::FiveTuple t = classifier->FindFlow (i->first);
-      std::stringstream protoStream;
-      protoStream << (uint16_t) t.protocol;
-      if (t.protocol == 6)
-        {
-          protoStream.str ("TCP");
-        }
-      if (t.protocol == 17)
-        {
-          protoStream.str ("UDP");
-        }
+  // for (std::map<FlowId, FlowMonitor::FlowStats>::const_iterator i = stats.begin (); i != stats.end (); ++i)
+  //   {
+  //     Ipv4FlowClassifier::FiveTuple t = classifier->FindFlow (i->first);
+  //     std::stringstream protoStream;
+  //     protoStream << (uint16_t) t.protocol;
+  //     if (t.protocol == 6)
+  //       {
+  //         protoStream.str ("TCP");
+  //       }
+  //     if (t.protocol == 17)
+  //       {
+  //         protoStream.str ("UDP");
+  //       }
 
-      outFile << "Flow " << i->first << " (" << t.sourceAddress << ":" << t.sourcePort << " -> " << t.destinationAddress << ":" << t.destinationPort << ") proto " << protoStream.str () << "\n";
-      outFile << "  Tx Packets: " << i->second.txPackets << "\n";
-      outFile << "  Tx Bytes:   " << i->second.txBytes << "\n";
-      outFile << "  TxOffered:  " << i->second.txBytes * 8.0 / ((simTimeMs - eMBBStartTimeMs) / 1000.0) / 1000.0 / 1000.0  << " Mbps\n";
-      outFile << "  Rx Bytes:   " << i->second.rxBytes << "\n";
-
-
-      if (i->second.rxPackets > 0)
-        {
-          // Measure the duration of the flow from receiver's perspective
-          //double rxDuration = i->second.timeLastRxPacket.GetSeconds () - i->second.timeFirstTxPacket.GetSeconds ();
-          double rxDuration = (simTimeMs - eMBBStartTimeMs) / 1000.0;
-
-          averageFlowThroughput += i->second.rxBytes * 8.0 / rxDuration / 1000 / 1000;
-          averageFlowDelay += 1000 * i->second.delaySum.GetSeconds () / i->second.rxPackets;
-
-	  outFile << "  Throughput: " << i->second.rxBytes * 8.0 / rxDuration / 1000 / 1000  << " Mbps\n";
-          outFile << "  Mean delay:  " << 1000 * i->second.delaySum.GetSeconds () / i->second.rxPackets << " ms\n";
-          //outFile << "  Mean upt:  " << i->second.uptSum / i->second.rxPackets / 1000/1000 << " Mbps \n";
-          outFile << "  Mean jitter:  " << 1000 * i->second.jitterSum.GetSeconds () / i->second.rxPackets  << " ms\n";
+  //     outFile << "Flow " << i->first << " (" << t.sourceAddress << ":" << t.sourcePort << " -> " << t.destinationAddress << ":" << t.destinationPort << ") proto " << protoStream.str () << "\n";
+  //     outFile << "  Tx Packets: " << i->second.txPackets << "\n";
+  //     outFile << "  Tx Bytes:   " << i->second.txBytes << "\n";
+  //     outFile << "  TxOffered:  " << i->second.txBytes * 8.0 / ((simTimeMs - eMBBStartTimeMs) / 1000.0) / 1000.0 / 1000.0  << " Mbps\n";
+  //     outFile << "  Rx Bytes:   " << i->second.rxBytes << "\n";
 
 
-        }
-      else
-        {
-          outFile << "  Throughput:  0 Mbps\n";
-          outFile << "  Mean delay:  0 ms\n";
-          outFile << "  Mean jitter: 0 ms\n";
-        }
-      outFile << "  Rx Packets: " << i->second.rxPackets << "\n";
+  //     if (i->second.rxPackets > 0)
+  //       {
+  //         // Measure the duration of the flow from receiver's perspective
+  //         //double rxDuration = i->second.timeLastRxPacket.GetSeconds () - i->second.timeFirstTxPacket.GetSeconds ();
+  //         double rxDuration = (simTimeMs - eMBBStartTimeMs) / 1000.0;
 
-    } 
-    outFile << "\n\n  Mean flow throughput: " << averageFlowThroughput / stats.size () << "\n";
-    outFile << "  Mean flow delay: " << averageFlowDelay / stats.size () << "\n";
+  //         averageFlowThroughput += i->second.rxBytes * 8.0 / rxDuration / 1000 / 1000;
+  //         averageFlowDelay += 1000 * i->second.delaySum.GetSeconds () / i->second.rxPackets;
 
-    outFile.close ();
+	//   outFile << "  Throughput: " << i->second.rxBytes * 8.0 / rxDuration / 1000 / 1000  << " Mbps\n";
+  //         outFile << "  Mean delay:  " << 1000 * i->second.delaySum.GetSeconds () / i->second.rxPackets << " ms\n";
+  //         //outFile << "  Mean upt:  " << i->second.uptSum / i->second.rxPackets / 1000/1000 << " Mbps \n";
+  //         outFile << "  Mean jitter:  " << 1000 * i->second.jitterSum.GetSeconds () / i->second.rxPackets  << " ms\n";
 
-    std::ifstream f (filename.c_str ());
 
-    if (f.is_open ())
-      {
-        std::cout << f.rdbuf ();
-      }
+  //       }
+  //     else
+  //       {
+  //         outFile << "  Throughput:  0 Mbps\n";
+  //         outFile << "  Mean delay:  0 ms\n";
+  //         outFile << "  Mean jitter: 0 ms\n";
+  //       }
+  //     outFile << "  Rx Packets: " << i->second.rxPackets << "\n";
+
+  //   } 
+  //   outFile << "\n\n  Mean flow throughput: " << averageFlowThroughput / stats.size () << "\n";
+  //   outFile << "  Mean flow delay: " << averageFlowDelay / stats.size () << "\n";
+
+  //   outFile.close ();
+
+  //   std::ifstream f (filename.c_str ());
+
+  //   if (f.is_open ())
+  //     {
+  //       std::cout << f.rdbuf ();
+  //     }
 
     //openGymInterface->NotifySimulationEnd();
     Simulator::Destroy ();

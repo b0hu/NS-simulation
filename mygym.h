@@ -12,7 +12,7 @@ namespace ns3{
     extern NodeContainer ueNodes;
     // extern GridScenarioHelper gridScenario;
 
-    extern int64_t randomStream;
+    extern uint64_t randomStream;
     
     extern uint32_t gNbNum;
     extern uint32_t ueNum;

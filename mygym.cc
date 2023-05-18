@@ -10,16 +10,6 @@
 
 namespace ns3{
 
-    NetDeviceContainer enbNetDev;
-    NetDeviceContainer ueNetDev;
-    NodeContainer gNbNodes;
-    NodeContainer ueNodes;
-    // NodeContainer embbueNodes;
-    // NodeContainer mmtcueNodes;
-    // NodeContainer urllcueNodes;
-
-    int64_t randomStream = 1;
-
     uint32_t gNbNum = 4;
     uint32_t ueNum = 8;
     double gNbHeight = 10.0;
@@ -38,6 +28,17 @@ namespace ns3{
 
     double averageFlowThroughput = 0.0;
     double averageFlowDelay = 0.0;
+
+    uint64_t randomStream = 1;
+
+    NetDeviceContainer enbNetDev;
+    NetDeviceContainer ueNetDev;
+    NodeContainer gNbNodes;
+    NodeContainer ueNodes;
+    // NodeContainer eMBBueNodes;
+    // NodeContainer mMTCueNodes;
+    // NodeContainer URLLCueNodes;
+
 
     FlowMonitorHelper flowmonHelper;
     Ptr<ns3::FlowMonitor> monitor;
@@ -192,22 +193,6 @@ namespace ns3{
         //openGym->NotifyCurrentState();
         Notify();
     }
-
-    /*void make_grid(){
-        gridScenario.SetRows (10);
-        gridScenario.SetColumns (10);
-        gridScenario.SetHorizontalBsDistance (15.0);
-        gridScenario.SetBsHeight (10.0);
-        gridScenario.SetUtHeight (1.5);
-        // must be set before BS number
-        gridScenario.SetSectorization (GridScenarioHelper::SINGLE);
-        gridScenario.SetBsNumber (gNbNum);
-        gridScenario.SetUtNumber (ueNum);
-        gridScenario.SetScenarioHeight (500); // Create a 3x3 scenario where the UE will
-        gridScenario.SetScenarioLength (500); // be distribuited.
-        randomStream += gridScenario.AssignStreams (randomStream);
-        gridScenario.CreateScenario ();
-    }*/
 
     void flow_monitor(){
         // Print per-flow statistics
