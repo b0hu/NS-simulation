@@ -106,8 +106,15 @@ main (int argc, char *argv[])
                                  "Y", StringValue ("ns3::UniformRandomVariable[Min=0|Max=60]"),
                                  "Z", StringValue ("ns3::UniformRandomVariable[Min=0|Max=2]"));
   uemobility.SetMobilityModel("ns3::RandomWalk2dMobilityModel", "Bounds",RectangleValue(Rectangle(0.0, 60.0, 0.0, 60.0)));
-  ueNodes.Create(ueNum);
-  uemobility.Install(ueNodes);
+  // ueNodes.Create(ueNum);
+  // uemobility.Install(ueNodes);
+
+  eMBBueNodes.Create(ueNum);
+  uemobility.Install(eMBBueNodes);
+  mMTCueNodes.Create(ueNum);
+  uemobility.Install(mMTCueNodes);
+  URLLCueNodes.Create(ueNum);
+  uemobility.Install(URLLCueNodes);
 
 
   Ptr<NrPointToPointEpcHelper> epcHelper = CreateObject<NrPointToPointEpcHelper> ();
@@ -158,10 +165,16 @@ main (int argc, char *argv[])
   // nrHelper->SetUeBwpManagerAlgorithmAttribute ("NGBR_LOW_LAT_EMBB", UintegerValue (bwpIdForeMBB));
 
   enbNetDev = nrHelper->InstallGnbDevice(gNbNodes, allBwps);
-  ueNetDev = nrHelper->InstallUeDevice(ueNodes, allBwps);
+  // ueNetDev = nrHelper->InstallUeDevice(ueNodes, allBwps);
+  eMBBNetDev = nrHelper->InstallUeDevice(eMBBueNodes, allBwps);
+  mMTCNetDev = nrHelper->InstallUeDevice(mMTCueNodes, allBwps);
+  URLLCNetDev = nrHelper->InstallUeDevice(URLLCueNodes, allBwps);
 
   randomStream += nrHelper->AssignStreams (enbNetDev, randomStream);
-  randomStream += nrHelper->AssignStreams (ueNetDev, randomStream);
+  // randomStream += nrHelper->AssignStreams (ueNetDev, randomStream);
+  randomStream += nrHelper->AssignStreams (eMBBNetDev, randomStream);
+  randomStream += nrHelper->AssignStreams (mMTCNetDev, randomStream);
+  randomStream += nrHelper->AssignStreams (URLLCNetDev, randomStream);
   
   for(uint16_t i = 0; i <gNbNum ; i++){
 	  nrHelper->GetGnbPhy (enbNetDev.Get (i), 0)->SetAttribute ("Numerology", UintegerValue (0));
@@ -175,7 +188,22 @@ main (int argc, char *argv[])
       DynamicCast<NrGnbNetDevice> (*it)->UpdateConfig ();
     }
 
-  for (auto it = ueNetDev.Begin (); it != ueNetDev.End (); ++it)
+  // for (auto it = ueNetDev.Begin (); it != ueNetDev.End (); ++it)
+  //   {
+  //     DynamicCast<NrUeNetDevice> (*it)->UpdateConfig ();
+  //   }
+  
+  for (auto it = eMBBNetDev.Begin (); it != eMBBNetDev.End (); ++it)
+    {
+      DynamicCast<NrUeNetDevice> (*it)->UpdateConfig ();
+    }
+  
+  for (auto it = mMTCNetDev.Begin (); it != mMTCNetDev.End (); ++it)
+    {
+      DynamicCast<NrUeNetDevice> (*it)->UpdateConfig ();
+    }
+  
+  for (auto it = URLLCNetDev.Begin (); it != URLLCNetDev.End (); ++it)
     {
       DynamicCast<NrUeNetDevice> (*it)->UpdateConfig ();
     }
@@ -198,19 +226,37 @@ main (int argc, char *argv[])
   Ipv4InterfaceContainer internetIpIfaces = ipv4h.Assign (internetDevices);
   Ptr<Ipv4StaticRouting> remoteHostStaticRouting = ipv4RoutingHelper.GetStaticRouting (remoteHost->GetObject<Ipv4> ());
   remoteHostStaticRouting->AddNetworkRouteTo (Ipv4Address ("7.0.0.0"), Ipv4Mask ("255.0.0.0"), 1);
-  internet.Install(ueNodes);
-
-  Ipv4InterfaceContainer ueIpIface = epcHelper->AssignUeIpv4Address (NetDeviceContainer (ueNetDev));
-
-  /*for (uint32_t j = 0; j < gridScenario.GetUserTerminals ().GetN (); ++j)
-    {
-      Ptr<Ipv4StaticRouting> ueStaticRouting = ipv4RoutingHelper.GetStaticRouting (gridScenario.GetUserTerminals ().Get (j)->GetObject<Ipv4> ());
-      ueStaticRouting->SetDefaultRoute (epcHelper->GetUeDefaultGatewayAddress (), 1);
-    }*/
+  // internet.Install(ueNodes);
+  internet.Install(eMBBueNodes);
+  internet.Install(mMTCueNodes);
+  internet.Install(URLLCueNodes);
   
-  for (uint32_t j = 0; j < ueNodes.GetN (); ++j)
+
+  // Ipv4InterfaceContainer ueIpIface = epcHelper->AssignUeIpv4Address (NetDeviceContainer (ueNetDev));
+  Ipv4InterfaceContainer ueIpIface1 = epcHelper->AssignUeIpv4Address (NetDeviceContainer (eMBBNetDev));
+  Ipv4InterfaceContainer ueIpIface2 = epcHelper->AssignUeIpv4Address (NetDeviceContainer (mMTCNetDev));
+  Ipv4InterfaceContainer ueIpIface3 = epcHelper->AssignUeIpv4Address (NetDeviceContainer (URLLCNetDev));
+  
+  // for (uint32_t j = 0; j < ueNodes.GetN (); ++j)
+  //   {
+  //     Ptr<Ipv4StaticRouting> ueStaticRouting = ipv4RoutingHelper.GetStaticRouting (ueNodes.Get (j)->GetObject<Ipv4> ());
+  //     ueStaticRouting->SetDefaultRoute (epcHelper->GetUeDefaultGatewayAddress (), 1);
+  //   }
+
+  for (uint32_t j = 0; j < eMBBueNodes.GetN (); ++j)
     {
-      Ptr<Ipv4StaticRouting> ueStaticRouting = ipv4RoutingHelper.GetStaticRouting (ueNodes.Get (j)->GetObject<Ipv4> ());
+      Ptr<Ipv4StaticRouting> ueStaticRouting = ipv4RoutingHelper.GetStaticRouting (eMBBueNodes.Get (j)->GetObject<Ipv4> ());
+      ueStaticRouting->SetDefaultRoute (epcHelper->GetUeDefaultGatewayAddress (), 1);
+    }
+  for (uint32_t j = 0; j < mMTCueNodes.GetN (); ++j)
+    {
+      Ptr<Ipv4StaticRouting> ueStaticRouting = ipv4RoutingHelper.GetStaticRouting (mMTCueNodes.Get (j)->GetObject<Ipv4> ());
+      ueStaticRouting->SetDefaultRoute (epcHelper->GetUeDefaultGatewayAddress (), 1);
+    }
+  
+  for (uint32_t j = 0; j < URLLCueNodes.GetN (); ++j)
+    {
+      Ptr<Ipv4StaticRouting> ueStaticRouting = ipv4RoutingHelper.GetStaticRouting (URLLCueNodes.Get (j)->GetObject<Ipv4> ());
       ueStaticRouting->SetDefaultRoute (epcHelper->GetUeDefaultGatewayAddress (), 1);
     }
 
@@ -221,7 +267,10 @@ main (int argc, char *argv[])
 	NS_ASSERT(ueDev != nullptr);
 	nrHelper->AttachToEnb(ueDev, enbDev);
 	}*/
-  nrHelper->AttachToClosestEnb(ueNetDev, enbNetDev);
+  // nrHelper->AttachToClosestEnb(ueNetDev, enbNetDev);
+  nrHelper->AttachToClosestEnb(eMBBNetDev, enbNetDev);
+  nrHelper->AttachToClosestEnb(mMTCNetDev, enbNetDev);
+  nrHelper->AttachToClosestEnb(URLLCNetDev, enbNetDev);
 
   /*
    * Traffic part. Install two kind of traffic: low-latency and voice, each
@@ -232,12 +281,20 @@ main (int argc, char *argv[])
   ApplicationContainer serverApps;
   // The sink will always listen to the specified ports
   UdpServerHelper PacketSinkeMBB (PorteMBB);
+  UdpServerHelper PacketSinkmMTC (PortmMTC);
+  UdpServerHelper PacketSinkURLLC (PortURLLC);
 
   // The server, that is the application which is listening, is installed in the UE
   // for the DL traffic, and in the remote host for the UL traffic
   // serverApps.Add (PacketSinkeMBB.Install (gridScenario.GetUserTerminals ()));
-  serverApps.Add (PacketSinkeMBB.Install (ueNodes));
+  // serverApps.Add (PacketSinkeMBB.Install (ueNodes));
+  // serverApps.Add (PacketSinkeMBB.Install (remoteHost));
+  serverApps.Add (PacketSinkeMBB.Install (eMBBueNodes));
   serverApps.Add (PacketSinkeMBB.Install (remoteHost));
+  serverApps.Add (PacketSinkmMTC.Install (mMTCueNodes));
+  serverApps.Add (PacketSinkmMTC.Install (remoteHost));
+  serverApps.Add (PacketSinkURLLC.Install (URLLCueNodes));
+  serverApps.Add (PacketSinkURLLC.Install (remoteHost));
 
 
   /*
@@ -263,34 +320,72 @@ main (int argc, char *argv[])
   pfeMBB.localPortEnd = PorteMBB;
   eMBBTft->Add (pfeMBB);
 
+  Ptr<EpcTft> mMTCTft = Create<EpcTft> ();
+  EpcTft::PacketFilter pfmMTC;
+  pfmMTC.localPortStart = PortmMTC;
+  pfmMTC.localPortEnd = PortmMTC;
+  mMTCTft->Add (pfmMTC);
+
+  Ptr<EpcTft> URLLCTft = Create<EpcTft> ();
+  EpcTft::PacketFilter pfURLLC;
+  pfURLLC.localPortStart = PortURLLC;
+  pfURLLC.localPortEnd = PortURLLC;
+  URLLCTft->Add (pfURLLC);
+
   /*
    * Let's install the applications!
    */
   ApplicationContainer clientApps;
 
-  /*for (uint32_t i = 0; i < gridScenario.GetUserTerminals ().GetN (); ++i)
+  // for (uint32_t i = 0; i < ueNodes.GetN (); ++i)
+  //   {
+  //     Ptr<Node> ue = ueNodes.Get (i);
+  //     Ptr<NetDevice> ueDevice = ueNetDev.Get (i);
+  //     Address ueAddress = ueIpIface.GetAddress (i);
+
+  //     // The client, who is transmitting, is installed in the remote host,
+  //     // with destination address set to the address of the UE
+  //     dlClienteMBB.SetAttribute ("RemoteAddress", AddressValue (ueAddress));
+  //     clientApps.Add (dlClienteMBB.Install (remoteHost));
+  //     nrHelper->ActivateDedicatedEpsBearer(ueDevice, eMBBBearer, eMBBTft);
+  //   }
+  for (uint32_t i = 0; i < eMBBueNodes.GetN (); ++i)
     {
-      Ptr<Node> ue = gridScenario.GetUserTerminals ().Get (i);
-      Ptr<NetDevice> ueDevice = ueNetDev.Get (i);
-      Address ueAddress = ueIpIface.GetAddress (i);
+      Ptr<Node> ue = eMBBueNodes.Get (i);
+      Ptr<NetDevice> ueDevice = eMBBNetDev.Get (i);
+      Address ueAddress = ueIpIface1.GetAddress (i);
 
       // The client, who is transmitting, is installed in the remote host,
       // with destination address set to the address of the UE
       dlClienteMBB.SetAttribute ("RemoteAddress", AddressValue (ueAddress));
       clientApps.Add (dlClienteMBB.Install (remoteHost));
       nrHelper->ActivateDedicatedEpsBearer(ueDevice, eMBBBearer, eMBBTft);
-    }*/
-  for (uint32_t i = 0; i < ueNodes.GetN (); ++i)
+    }
+  
+  for (uint32_t i = 0; i < mMTCueNodes.GetN (); ++i)
     {
-      Ptr<Node> ue = ueNodes.Get (i);
-      Ptr<NetDevice> ueDevice = ueNetDev.Get (i);
-      Address ueAddress = ueIpIface.GetAddress (i);
+      Ptr<Node> ue = mMTCueNodes.Get (i);
+      Ptr<NetDevice> ueDevice = mMTCNetDev.Get (i);
+      Address ueAddress = ueIpIface2.GetAddress (i);
 
       // The client, who is transmitting, is installed in the remote host,
       // with destination address set to the address of the UE
       dlClienteMBB.SetAttribute ("RemoteAddress", AddressValue (ueAddress));
       clientApps.Add (dlClienteMBB.Install (remoteHost));
-      nrHelper->ActivateDedicatedEpsBearer(ueDevice, eMBBBearer, eMBBTft);
+      nrHelper->ActivateDedicatedEpsBearer(ueDevice, mMTCBearer, mMTCTft);
+    }
+  
+  for (uint32_t i = 0; i < URLLCueNodes.GetN (); ++i)
+    {
+      Ptr<Node> ue = URLLCueNodes.Get (i);
+      Ptr<NetDevice> ueDevice = URLLCNetDev.Get (i);
+      Address ueAddress = ueIpIface3.GetAddress (i);
+
+      // The client, who is transmitting, is installed in the remote host,
+      // with destination address set to the address of the UE
+      dlClienteMBB.SetAttribute ("RemoteAddress", AddressValue (ueAddress));
+      clientApps.Add (dlClienteMBB.Install (remoteHost));
+      nrHelper->ActivateDedicatedEpsBearer(ueDevice, URLLCBearer, URLLCTft);
     }
 
 
@@ -354,8 +449,11 @@ main (int argc, char *argv[])
   //FlowMonitorHelper flowmonHelper;
   //NodeContainer endpointNodes;
   endpointNodes.Add (remoteHost);
-  // endpointNodes.Add (gridScenario.GetUserTerminals ());
-  endpointNodes.Add (ueNodes);
+  // endpointNodes.Add (ueNodes);
+  endpointNodes.Add (eMBBueNodes);
+  endpointNodes.Add (mMTCueNodes);
+  endpointNodes.Add (URLLCueNodes);
+
 
   //Ptr<ns3::FlowMonitor> monitor = flowmonHelper.Install (endpointNodes);
   monitor = flowmonHelper.Install (endpointNodes);
@@ -406,7 +504,7 @@ main (int argc, char *argv[])
       std::cout << "id of node " <<  node->GetId() << std::endl;
       std::cout << n << std::endl;
     }
-  for (auto it = ueNetDev.Begin (); it != ueNetDev.End (); ++it)
+  /*for (auto it = ueNetDev.Begin (); it != ueNetDev.End (); ++it)
     {
       //DynamicCast<NrGnbNetDevice> (*it)->UpdateConfig ();
       std::map<uint8_t,Ptr<BandwidthPartUe>> part = DynamicCast<NrUeNetDevice>(*it)->GetCcMap();
@@ -416,7 +514,7 @@ main (int argc, char *argv[])
       // Ptr <BandwidthPartUe> uemap = part[1];
       std::cout << "Cell id of enb " <<  target->GetCellId() << std::endl;
       //std::cout << "id of node " <<  node->GetId() << std::endl;
-    }
+    }*/
   
   // std::ofstream outFile;
   // std::string filename = outputDir + "/" + simTag;

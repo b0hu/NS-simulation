@@ -23,6 +23,9 @@ namespace ns3{
     double bandwidthBand1 = 100e6;
     //double totalTxPower = 4;
     uint16_t PorteMBB = 1234;
+    uint16_t PortmMTC = 1235;
+    uint16_t PortURLLC = 1236;
+
     uint32_t simSeed = 1;
     uint32_t testArg = 0;
 
@@ -32,12 +35,16 @@ namespace ns3{
     uint64_t randomStream = 1;
 
     NetDeviceContainer enbNetDev;
-    NetDeviceContainer ueNetDev;
+    // NetDeviceContainer ueNetDev;
+    NetDeviceContainer eMBBNetDev;
+    NetDeviceContainer mMTCNetDev;
+    NetDeviceContainer URLLCNetDev;
+
     NodeContainer gNbNodes;
-    NodeContainer ueNodes;
-    // NodeContainer eMBBueNodes;
-    // NodeContainer mMTCueNodes;
-    // NodeContainer URLLCueNodes;
+    // NodeContainer ueNodes;
+    NodeContainer eMBBueNodes;
+    NodeContainer mMTCueNodes;
+    NodeContainer URLLCueNodes;
 
 
     FlowMonitorHelper flowmonHelper;

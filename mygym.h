@@ -7,9 +7,16 @@
 
 namespace ns3{
     extern NetDeviceContainer enbNetDev;
-    extern NetDeviceContainer ueNetDev;
+    // extern NetDeviceContainer ueNetDev;
+    extern NetDeviceContainer eMBBNetDev;
+    extern NetDeviceContainer mMTCNetDev;
+    extern NetDeviceContainer URLLCNetDev;
+
     extern NodeContainer gNbNodes;
-    extern NodeContainer ueNodes;
+    // extern NodeContainer ueNodes;
+    extern NodeContainer eMBBueNodes;
+    extern NodeContainer mMTCueNodes;
+    extern NodeContainer URLLCueNodes;
     // extern GridScenarioHelper gridScenario;
 
     extern uint64_t randomStream;
@@ -27,6 +34,9 @@ namespace ns3{
     extern double bandwidthBand1 ;
     //double totalTxPower = 4;
     extern uint16_t PorteMBB;
+    extern uint16_t PortmMTC;
+    extern uint16_t PortURLLC;
+
     extern uint32_t simSeed;
     extern uint32_t testArg;
 
