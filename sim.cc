@@ -309,6 +309,16 @@ main (int argc, char *argv[])
   dlClienteMBB.SetAttribute ("PacketSize", UintegerValue (embbPacketSize));
   // dlClienteMBB.SetAttribute ("DataRate",StringValue ("2Mbps"));
   // dlClientVideo.SetAttribute ("Interval", TimeValue (Seconds (1.0 / lambdaVideo)));
+
+  UdpClientHelper dlClientmMTC;
+  dlClientmMTC.SetAttribute ("RemotePort", UintegerValue (PortmMTC));
+  dlClientmMTC.SetAttribute ("MaxPackets", UintegerValue (0xFFFFFFFF));
+  dlClientmMTC.SetAttribute ("PacketSize", UintegerValue (mmtcPacketSize));
+
+  UdpClientHelper dlClientURLLC;
+  dlClientURLLC.SetAttribute ("RemotePort", UintegerValue (PortURLLC));
+  dlClientURLLC.SetAttribute ("MaxPackets", UintegerValue (0xFFFFFFFF));
+  dlClientURLLC.SetAttribute ("PacketSize", UintegerValue (urllcPacketSize));
   
   EpsBearer eMBBBearer (EpsBearer::NGBR_LOW_LAT_EMBB);
   EpsBearer mMTCBearer (EpsBearer::NGBR_V2X);
@@ -370,8 +380,8 @@ main (int argc, char *argv[])
 
       // The client, who is transmitting, is installed in the remote host,
       // with destination address set to the address of the UE
-      dlClienteMBB.SetAttribute ("RemoteAddress", AddressValue (ueAddress));
-      clientApps.Add (dlClienteMBB.Install (remoteHost));
+      dlClientmMTC.SetAttribute ("RemoteAddress", AddressValue (ueAddress));
+      clientApps.Add (dlClientmMTC.Install (remoteHost));
       nrHelper->ActivateDedicatedEpsBearer(ueDevice, mMTCBearer, mMTCTft);
     }
   
@@ -383,8 +393,8 @@ main (int argc, char *argv[])
 
       // The client, who is transmitting, is installed in the remote host,
       // with destination address set to the address of the UE
-      dlClienteMBB.SetAttribute ("RemoteAddress", AddressValue (ueAddress));
-      clientApps.Add (dlClienteMBB.Install (remoteHost));
+      dlClientURLLC.SetAttribute ("RemoteAddress", AddressValue (ueAddress));
+      clientApps.Add (dlClientURLLC.Install (remoteHost));
       nrHelper->ActivateDedicatedEpsBearer(ueDevice, URLLCBearer, URLLCTft);
     }
 

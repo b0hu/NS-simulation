@@ -16,6 +16,9 @@ namespace ns3{
     double ueHeight = 1.5;
 
     uint32_t embbPacketSize = 1000;
+    uint32_t mmtcPacketSize = 2000;
+    uint32_t urllcPacketSize = 500;
+
     uint32_t simTimeMs = 1800;
     uint32_t envStepTime = 200;
     uint32_t eMBBStartTimeMs = 400;

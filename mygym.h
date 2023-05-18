@@ -27,6 +27,9 @@ namespace ns3{
     extern double ueHeight;
 
     extern uint32_t embbPacketSize;
+    extern uint32_t mmtcPacketSize;
+    extern uint32_t urllcPacketSize;
+
     extern uint32_t simTimeMs;
     extern uint32_t envStepTime;
     extern uint32_t eMBBStartTimeMs;
