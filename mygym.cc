@@ -57,152 +57,152 @@ namespace ns3{
     std::string simTag = "default";
     std::string outputDir = "./";
 
-    NS_LOG_COMPONENT_DEFINE ("MyGym");
+    // NS_LOG_COMPONENT_DEFINE ("MyGym");
 
-    NS_OBJECT_ENSURE_REGISTERED (MyGym);
+    // NS_OBJECT_ENSURE_REGISTERED (MyGym);
 
-    MyGym::MyGym (/* args */){
-        NS_LOG_FUNCTION (this);
-        Simulator::Schedule (MilliSeconds(envStepTime), &MyGym::ScheduleNextStateRead,this);
-    }
-    MyGym::~MyGym (){
-        NS_LOG_FUNCTION (this);
-    }
+    // MyGym::MyGym (){
+    //     NS_LOG_FUNCTION (this);
+    //     Simulator::Schedule (MilliSeconds(envStepTime), &MyGym::ScheduleNextStateRead,this);
+    // }
+    // MyGym::~MyGym (){
+    //     NS_LOG_FUNCTION (this);
+    // }
 
-    TypeId
-    MyGym::GetTypeId (void){
-        static TypeId tid = TypeId ("MyGym")
-            .SetParent<OpenGymEnv> ()
-            .SetGroupName ("OpenGym")
-            .AddConstructor<MyGym> ()
-        ;
-        return tid;
-    }
-    /*
-    Define observation space
-    */
-    Ptr<OpenGymSpace>
-    MyGym::GetObservationSpace()
-    {
-        //uint32_t nodeNum = 4;
-        float low = 0.0;
-        float high = 1000.0;
-        // std::vector<uint32_t> shape = {2,};
-        // std::string dtype = TypeNameGet<uint32_t> ();
-        std::vector<uint32_t> shape = {2,};
-        std::string dtype = TypeNameGet<double> ();
-        //Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace> (low, high, shape, dtype);
-        //Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace> (shape);
-        Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace >(low, high, shape, dtype);
+    // TypeId
+    // MyGym::GetTypeId (void){
+    //     static TypeId tid = TypeId ("MyGym")
+    //         .SetParent<OpenGymEnv> ()
+    //         .SetGroupName ("OpenGym")
+    //         .AddConstructor<MyGym> ()
+    //     ;
+    //     return tid;
+    // }
+    // /*
+    // Define observation space
+    // */
+    // Ptr<OpenGymSpace>
+    // MyGym::GetObservationSpace()
+    // {
+    //     //uint32_t nodeNum = 4;
+    //     float low = 0.0;
+    //     float high = 1000.0;
+    //     // std::vector<uint32_t> shape = {2,};
+    //     // std::string dtype = TypeNameGet<uint32_t> ();
+    //     std::vector<uint32_t> shape = {2,};
+    //     std::string dtype = TypeNameGet<double> ();
+    //     //Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace> (low, high, shape, dtype);
+    //     //Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace> (shape);
+    //     Ptr<OpenGymBoxSpace> space = CreateObject<OpenGymBoxSpace >(low, high, shape, dtype);
 
-        // space->AddValue(averageFlowThroughput);
-        // space->AddValue(averageFlowDelay);
+    //     // space->AddValue(averageFlowThroughput);
+    //     // space->AddValue(averageFlowDelay);
         
-        NS_LOG_UNCOND ("MyGetObservationSpace: " << space);
-        return space;
-    }
+    //     NS_LOG_UNCOND ("MyGetObservationSpace: " << space);
+    //     return space;
+    // }
 
-    /*
-    Define action space
-    */
-    Ptr<OpenGymSpace>
-    MyGym::GetActionSpace(void)
-    {
-        Ptr<OpenGymDiscreteSpace> space = CreateObject<OpenGymDiscreteSpace> (ueNum);
-        NS_LOG_UNCOND ("MyGetActionSpace: " << space);
-        return space;
-    }
+    // /*
+    // Define action space
+    // */
+    // Ptr<OpenGymSpace>
+    // MyGym::GetActionSpace(void)
+    // {
+    //     Ptr<OpenGymDiscreteSpace> space = CreateObject<OpenGymDiscreteSpace> (ueNum);
+    //     NS_LOG_UNCOND ("MyGetActionSpace: " << space);
+    //     return space;
+    // }
 
-    /*
-    Define game over condition
-    */
-    bool
-    MyGym::GetGameOver(void)
-    {
+    // /*
+    // Define game over condition
+    // */
+    // bool
+    // MyGym::GetGameOver(void)
+    // {
 
-        bool isGameOver = false;
-        bool test = false;
-        static float stepCounter = 0.0;
-        stepCounter += 1;
-        if (stepCounter == 10 && test) {
-            isGameOver = true;
-        }
-        NS_LOG_UNCOND ("MyGetGameOver: " << isGameOver);
-        return isGameOver;
-    }
+    //     bool isGameOver = false;
+    //     bool test = false;
+    //     static float stepCounter = 0.0;
+    //     stepCounter += 1;
+    //     if (stepCounter == 10 && test) {
+    //         isGameOver = true;
+    //     }
+    //     NS_LOG_UNCOND ("MyGetGameOver: " << isGameOver);
+    //     return isGameOver;
+    // }
 
-    /*
-    Collect observations
-    */
-    Ptr<OpenGymDataContainer>
-    MyGym::GetObservation(void)
-    {
-        // uint32_t nodeNum = 4;
-        // uint32_t low = 0.0;
-        // uint32_t high = 10.0;
-        // Ptr<UniformRandomVariable> rngInt = CreateObject<UniformRandomVariable> ();
+    // /*
+    // Collect observations
+    // */
+    // Ptr<OpenGymDataContainer>
+    // MyGym::GetObservation(void)
+    // {
+    //     // uint32_t nodeNum = 4;
+    //     // uint32_t low = 0.0;
+    //     // uint32_t high = 10.0;
+    //     // Ptr<UniformRandomVariable> rngInt = CreateObject<UniformRandomVariable> ();
 
-        // std::vector<uint32_t> shape = {2,};
-        // Ptr<OpenGymBoxContainer<uint32_t> > box = CreateObject<OpenGymBoxContainer<uint32_t> >(shape);
+    //     // std::vector<uint32_t> shape = {2,};
+    //     // Ptr<OpenGymBoxContainer<uint32_t> > box = CreateObject<OpenGymBoxContainer<uint32_t> >(shape);
 
-        std::vector<uint32_t> shape = {2,};
-        Ptr<OpenGymBoxContainer<double> > box = CreateObject<OpenGymBoxContainer<double> >(shape);
+    //     std::vector<uint32_t> shape = {2,};
+    //     Ptr<OpenGymBoxContainer<double> > box = CreateObject<OpenGymBoxContainer<double> >(shape);
 
-        // generate random data
-        /*for (uint32_t i = 0; i<nodeNum; i++){
-            uint32_t value = rngInt->GetInteger(low, high);
-            box->AddValue(value);
-        }*/
-        box->AddValue(averageFlowThroughput);
-        box->AddValue(averageFlowDelay);
+    //     // generate random data
+    //     /*for (uint32_t i = 0; i<nodeNum; i++){
+    //         uint32_t value = rngInt->GetInteger(low, high);
+    //         box->AddValue(value);
+    //     }*/
+    //     box->AddValue(averageFlowThroughput);
+    //     box->AddValue(averageFlowDelay);
 
-        NS_LOG_UNCOND ("MyGetObservation: " << box);
-        return box;
-    }
+    //     NS_LOG_UNCOND ("MyGetObservation: " << box);
+    //     return box;
+    // }
 
-    /*
-    Define reward function
-    */
-    float
-    MyGym::GetReward(void)
-    {
-        static float reward = 0.0;
-        reward += 1;
-        return reward;
-    }
+    // /*
+    // Define reward function
+    // */
+    // float
+    // MyGym::GetReward(void)
+    // {
+    //     static float reward = 0.0;
+    //     reward += 1;
+    //     return reward;
+    // }
 
-    /*
-    Define extra info. Optional
-    */
-    std::string
-    MyGym::GetExtraInfo(void)
-    {
-        std::string myInfo = "testInfo";
-        myInfo += "|123";
-        NS_LOG_UNCOND("MyGetExtraInfo: " << myInfo);
-        return myInfo;
-    }
+    // /*
+    // Define extra info. Optional
+    // */
+    // std::string
+    // MyGym::GetExtraInfo(void)
+    // {
+    //     std::string myInfo = "testInfo";
+    //     myInfo += "|123";
+    //     NS_LOG_UNCOND("MyGetExtraInfo: " << myInfo);
+    //     return myInfo;
+    // }
 
 
-    /*
-    Execute received actions
-    */
-    bool
-    MyGym::ExecuteActions(Ptr<OpenGymDataContainer> action)
-    {
-        Ptr<OpenGymDiscreteContainer> discrete = DynamicCast<OpenGymDiscreteContainer>(action);
-        NS_LOG_UNCOND ("MyExecuteActions: " << action);
-        return true;
-    }
+    // /*
+    // Execute received actions
+    // */
+    // bool
+    // MyGym::ExecuteActions(Ptr<OpenGymDataContainer> action)
+    // {
+    //     Ptr<OpenGymDiscreteContainer> discrete = DynamicCast<OpenGymDiscreteContainer>(action);
+    //     NS_LOG_UNCOND ("MyExecuteActions: " << action);
+    //     return true;
+    // }
 
-    void 
-    MyGym::ScheduleNextStateRead()
-    {
-        flow_monitor();
-        Simulator::Schedule (MilliSeconds(envStepTime), &MyGym::ScheduleNextStateRead,this);
-        //openGym->NotifyCurrentState();
-        Notify();
-    }
+    // void 
+    // MyGym::ScheduleNextStateRead()
+    // {
+    //     flow_monitor();
+    //     Simulator::Schedule (MilliSeconds(envStepTime), &MyGym::ScheduleNextStateRead,this);
+    //     //openGym->NotifyCurrentState();
+    //     Notify();
+    // }
 
     void flow_monitor(){
         // Print per-flow statistics

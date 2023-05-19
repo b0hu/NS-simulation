@@ -53,22 +53,22 @@ namespace ns3{
     void make_grid();
     void flow_monitor();
 
-    class MyGym : public OpenGymEnv
-    {
-    private:
-        void ScheduleNextStateRead();
-    public:
-        MyGym(/* args */);
-        ~MyGym();
-        static TypeId GetTypeId (void);
-        Ptr<OpenGymSpace> GetActionSpace();
-        Ptr<OpenGymSpace> GetObservationSpace();
-        Ptr<OpenGymDataContainer> GetObservation();
-        float GetReward(void);
-        bool GetGameOver(void);
-        bool ExecuteActions(Ptr<OpenGymDataContainer> action);
-        std::string GetExtraInfo(void);
-    };
+    // class MyGym : public OpenGymEnv
+    // {
+    // private:
+    //     void ScheduleNextStateRead();
+    // public:
+    //     MyGym(/* args */);
+    //     ~MyGym();
+    //     static TypeId GetTypeId (void);
+    //     Ptr<OpenGymSpace> GetActionSpace();
+    //     Ptr<OpenGymSpace> GetObservationSpace();
+    //     Ptr<OpenGymDataContainer> GetObservation();
+    //     float GetReward(void);
+    //     bool GetGameOver(void);
+    //     bool ExecuteActions(Ptr<OpenGymDataContainer> action);
+    //     std::string GetExtraInfo(void);
+    // };
     
 }
 
