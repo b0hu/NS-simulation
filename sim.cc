@@ -54,6 +54,8 @@ using namespace ns3;
 // double averageFlowThroughput = 0.0;
 // double averageFlowDelay = 0.0;
 
+struct PointInFTPlane temp = PointInFTPlane(0, 0);
+
 NS_LOG_COMPONENT_DEFINE ("eMBB NS Simulation Test");
 
 int 
