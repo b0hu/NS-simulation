@@ -25,9 +25,11 @@
 #include "ns3/point-to-point-module.h"
 #include "ns3/flow-monitor-module.h"
 #include "ns3/nr-module.h"
+#include "ns3/nr-mac-scheduler-ns3.h"
+#include "ns3/nr-mac-scheduler-tdma-rr.h"
 #include "ns3/config-store-module.h"
 #include "ns3/antenna-module.h"
- #include "ns3/opengym-module.h"
+// #include "ns3/opengym-module.h"
 #include "ns3/node-list.h"
 #include "ns3/netanim-module.h"
 
@@ -53,8 +55,36 @@ using namespace ns3;
 
 // double averageFlowThroughput = 0.0;
 // double averageFlowDelay = 0.0;
+//
+uint32_t rbg = 0;
+uint8_t sym = 0;
 
-struct PointInFTPlane temp = PointInFTPlane(0, 0);
+//struct PointInFTPlane temp = new PointInFTPlane(rbg, sym);
+
+TypeId
+CustomerSceduler::GetTypeId()
+{
+	static TypeId tid = TypeId("ns3::CustomScheduler")
+		.SetParent<NrMacSchedulerTdmaRR>()
+		.AddConstructor<CustomScheduler>();
+
+	return tid;
+}
+
+class CustomScheduler : NrMacSchedulerTdmaRR
+{
+	public:
+		CustomScheduler();
+		static TypeId GetTypeId();
+		//struct PoInFTPlane ft = new PointInFTPlane(rbg,sym);
+};
+
+CustomScheduler* temp;
+NrMacSchedulerNs3 * temp2;
+NrMacSchedulerUeInfo * u;
+//temp->PointInFTPlane(rbg, sym);i
+//CustomScheduler:: FTResources ft = {rbg, sym};
+NrMacSchedulerNs3::PointInFTPlane * ft = new NrMacSchedulerNs3::PointInFTPlane(rbg, sym);
 
 NS_LOG_COMPONENT_DEFINE ("eMBB NS Simulation Test");
 
@@ -64,6 +94,9 @@ main (int argc, char *argv[])
   NS_LOG_UNCOND ("eMBB NS Test");
 
   Config::SetDefault ("ns3::LteRlcUm::MaxTxBufferSize", UintegerValue (999999999));
+
+std::cout << temp->GetTypeId() << std::endl;
+
 
   CommandLine cmd;
 
@@ -80,9 +113,9 @@ main (int argc, char *argv[])
   RngSeedManager::SetSeed (1);
   RngSeedManager::SetRun (simSeed);
 
-  Ptr<OpenGymInterface> openGymInterface = CreateObject<OpenGymInterface> (1234);
+ /* Ptr<OpenGymInterface> openGymInterface = CreateObject<OpenGymInterface> (1234);
   Ptr<MyGym> myGymEnv = CreateObject<MyGym> ();
-  myGymEnv->SetOpenGymInterface(openGymInterface);
+  myGymEnv->SetOpenGymInterface(openGymInterface);*/
 
   MobilityHelper enbmobility;
   enbmobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
@@ -95,7 +128,6 @@ main (int argc, char *argv[])
     uint32_t y = i/2;
     bsPositionAlloc->Add(Vector(x * 30 + 30, y * 30 + 30, gNbHeight));
   }
-
   enbmobility.SetPositionAllocator(bsPositionAlloc);
   gNbNodes.Create(gNbNum);
   enbmobility.Install(gNbNodes);
@@ -122,6 +154,7 @@ main (int argc, char *argv[])
   Ptr<NrPointToPointEpcHelper> epcHelper = CreateObject<NrPointToPointEpcHelper> ();
   Ptr<IdealBeamformingHelper> idealBeamformingHelper = CreateObject<IdealBeamformingHelper>();
   Ptr<NrHelper> nrHelper = CreateObject<NrHelper> ();
+  nrHelper->SetSchedulerTypeId(TypeId::LookupByName("ns3::CustomScheduler"));
 
   nrHelper->SetBeamformingHelper (idealBeamformingHelper);
   nrHelper->SetEpcHelper (epcHelper);
@@ -140,6 +173,7 @@ main (int argc, char *argv[])
   Config::SetDefault ("ns3::ThreeGppChannelModel::UpdatePeriod",TimeValue (MilliSeconds (0)));
   nrHelper->SetChannelConditionModelAttribute ("UpdatePeriod", TimeValue (MilliSeconds (0)));
   nrHelper->SetPathlossAttribute ("ShadowingEnabled", BooleanValue (false));
+  //nrHelper->SetSchedulerattribute();
 
   nrHelper->InitializeOperationBand (&bandTdd);
   allBwps = CcBwpCreator::GetAllBwps ({bandTdd});
