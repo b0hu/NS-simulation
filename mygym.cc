@@ -204,6 +204,16 @@ namespace ns3{
     //     Notify();
     // }
 
+    TypeId
+    CustomerSceduler::GetTypeId()
+    {
+        static TypeId tid = TypeId("ns3::CustomScheduler")
+                            .SetParent<NrMacSchedulerTdmaRR>()
+                            .AddConstructor<CustomScheduler>();
+
+        return tid;
+    }
+
     void flow_monitor(){
         // Print per-flow statistics
         averageFlowThroughput = 0.0;

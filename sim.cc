@@ -61,23 +61,6 @@ uint8_t sym = 0;
 
 //struct PointInFTPlane temp = new PointInFTPlane(rbg, sym);
 
-TypeId
-CustomerSceduler::GetTypeId()
-{
-	static TypeId tid = TypeId("ns3::CustomScheduler")
-		.SetParent<NrMacSchedulerTdmaRR>()
-		.AddConstructor<CustomScheduler>();
-
-	return tid;
-}
-
-class CustomScheduler : NrMacSchedulerTdmaRR
-{
-	public:
-		CustomScheduler();
-		static TypeId GetTypeId();
-		//struct PoInFTPlane ft = new PointInFTPlane(rbg,sym);
-};
 
 CustomScheduler* temp;
 NrMacSchedulerNs3 * temp2;

@@ -4,6 +4,7 @@
 #include "ns3/opengym-module.h"
 #include "ns3/net-device-container.h"
 #include "ns3/flow-monitor-module.h"
+#include "ns3/nr-mac-scheduler-tdma-rr.h"
 
 namespace ns3{
     extern NetDeviceContainer enbNetDev;
@@ -50,7 +51,6 @@ namespace ns3{
     extern Ptr<ns3::FlowMonitor> monitor;
     extern NodeContainer endpointNodes;
 
-    void make_grid();
     void flow_monitor();
 
     // class MyGym : public OpenGymEnv
@@ -69,6 +69,15 @@ namespace ns3{
     //     bool ExecuteActions(Ptr<OpenGymDataContainer> action);
     //     std::string GetExtraInfo(void);
     // };
+
+    class CustomScheduler : NrMacSchedulerTdmaRR
+{
+	public:
+		CustomScheduler();
+        ~CustomScheduler();
+		static TypeId GetTypeId();
+		//struct PoInFTPlane ft = new PointInFTPlane(rbg,sym);
+};
     
 }
 
