@@ -71,11 +71,12 @@ namespace ns3{
     //     std::string GetExtraInfo(void);
     // };
 
-    class CustomScheduler :  NrMacSchedulerNs3
+    class CustomScheduler :  public NrMacSchedulerNs3
     {
         public:
             CustomScheduler();
-            ~CustomScheduler() override;
+            ~CustomScheduler() override
+            {}
             static TypeId GetTypeId();
             //struct PoInFTPlane ft = new PointInFTPlane(rbg,sym);
 
