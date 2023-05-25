@@ -226,7 +226,210 @@ namespace ns3{
 	    NS_LOG_FUNCTION(this);
     }
 
+    uint8_t
+    CustomScheduler::GetTpc() const
+    {
+        NS_LOG_FUNCTION(this);
+        return 1; // 1 is mapped to 0 for Accumulated mode, and to -1 in Absolute mode TS38.213 Table
+                // Table 7.1.1-1
+    }
 
+    CustomScheduler::BeamSymbolMap
+    CustomScheduler::AssignDLRBG(uint32_t symAvail, const ActiveUeMap& activeDl) const
+    {
+        NS_LOG_FUNCTION(this);
+
+        // BeforeSchedFn beforeSched = std::bind(&NrMacSchedulerTdma::BeforeDlSched,
+        //                                     this,
+        //                                     std::placeholders::_1,
+        //                                     std::placeholders::_2);
+        // AfterSuccessfullAssignmentFn SuccFn = std::bind(&NrMacSchedulerTdma::AssignedDlResources,
+        //                                                 this,
+        //                                                 std::placeholders::_1,
+        //                                                 std::placeholders::_2,
+        //                                                 std::placeholders::_3);
+        // AfterUnsucessfullAssignmentFn UnSuccFn = std::bind(&NrMacSchedulerTdma::NotAssignedDlResources,
+        //                                                 this,
+        //                                                 std::placeholders::_1,
+        //                                                 std::placeholders::_2,
+        //                                                 std::placeholders::_3);
+        // GetCompareUeFn compareFn = std::bind(&NrMacSchedulerTdma::GetUeCompareDlFn, this);
+
+        // GetTBSFn GetTbs = &NrMacSchedulerUeInfo::GetDlTBS;
+        // GetRBGFn GetRBG = &NrMacSchedulerUeInfo::GetDlRBG;
+        // GetSymFn GetSym = &NrMacSchedulerUeInfo::GetDlSym;
+
+        // return AssignRBGTDMA(symAvail,
+        //                     activeDl,
+        //                     "DL",
+        //                     beforeSched,
+        //                     compareFn,
+        //                     GetTbs,
+        //                     GetRBG,
+        //                     GetSym,
+        //                     SuccFn,
+        //                     UnSuccFn);
+        
+        CustomScheduler::BeamSymbolMap ret;
+        return ret;
+    }
+
+    CustomScheduler::BeamSymbolMap
+    CustomScheduler::AssignULRBG(uint32_t symAvail, const ActiveUeMap& activeUl) const
+    {
+        NS_LOG_FUNCTION(this);
+        // BeforeSchedFn beforeSched = std::bind(&NrMacSchedulerTdma::BeforeUlSched,
+        //                                     this,
+        //                                     std::placeholders::_1,
+        //                                     std::placeholders::_2);
+        // AfterSuccessfullAssignmentFn SuccFn = std::bind(&NrMacSchedulerTdma::AssignedUlResources,
+        //                                                 this,
+        //                                                 std::placeholders::_1,
+        //                                                 std::placeholders::_2,
+        //                                                 std::placeholders::_3);
+        // GetCompareUeFn compareFn = std::bind(&NrMacSchedulerTdma::GetUeCompareUlFn, this);
+        // AfterUnsucessfullAssignmentFn UnSuccFn = std::bind(&NrMacSchedulerTdma::NotAssignedUlResources,
+        //                                                 this,
+        //                                                 std::placeholders::_1,
+        //                                                 std::placeholders::_2,
+        //                                                 std::placeholders::_3);
+        // GetTBSFn GetTbs = &NrMacSchedulerUeInfo::GetUlTBS;
+        // GetRBGFn GetRBG = &NrMacSchedulerUeInfo::GetUlRBG;
+        // GetSymFn GetSym = &NrMacSchedulerUeInfo::GetUlSym;
+
+        // return AssignRBGTDMA(symAvail,
+        //                     activeUl,
+        //                     "UL",
+        //                     beforeSched,
+        //                     compareFn,
+        //                     GetTbs,
+        //                     GetRBG,
+        //                     GetSym,
+        //                     SuccFn,
+        //                     UnSuccFn);
+        
+        CustomScheduler::BeamSymbolMap ret;
+        return ret;
+    }
+
+    std::shared_ptr<DciInfoElementTdma>
+    CustomScheduler::CreateDlDci(PointInFTPlane* spoint,
+                                    const std::shared_ptr<NrMacSchedulerUeInfo>& ueInfo,
+                                    [[maybe_unused]] uint32_t maxSym) const
+    {
+        // NS_LOG_FUNCTION(this);
+        // uint16_t countLessThanMinBytes = 0;
+
+        // // we do not need to recalculate the TB size here because we already
+        // // computed it in side the method AssignDLRBG called before this method.
+        // // otherwise, we need to repeat the logic of NrMacSchedulerUeInfo::UpdateDlMetric
+        // // here to cover MIMO
+
+        // // Due to MIMO implementation MCS, TB size, ndi, rv, are vectors
+        // std::vector<uint8_t> ndi;
+        // ndi.resize(ueInfo->m_dlTbSize.size());
+        // std::vector<uint8_t> rv;
+        // rv.resize(ueInfo->m_dlTbSize.size());
+        // uint32_t tbs = 0;
+        // for (uint32_t numTb = 0; numTb < ueInfo->m_dlTbSize.size(); numTb++)
+        // {
+        //     tbs = ueInfo->m_dlTbSize.at(numTb);
+        //     if (tbs < 10)
+        //     {
+        //         countLessThanMinBytes++;
+        //         NS_LOG_DEBUG("While creating DL DCI for UE "
+        //                     << ueInfo->m_rnti << " stream " << numTb << " assigned " << ueInfo->m_dlRBG
+        //                     << " DL RBG, but TBS < 10, reseting its size to zero in UE info");
+        //         ueInfo->m_dlTbSize.at(numTb) = 0;
+        //         ndi.at(numTb) = 0;
+        //         rv.at(numTb) = 0;
+        //         continue;
+        //     }
+        //     ndi.at(numTb) = 1;
+        //     rv.at(numTb) = 0;
+        // }
+
+        // // If the size of all the TBs is less than 7 bytes (3 mac header, 2 rlc header, 2 data),
+        // // then we can't transmit any new data, so don't create dci.
+        // if (countLessThanMinBytes == ueInfo->m_dlTbSize.size())
+        // {
+        //     NS_LOG_DEBUG("While creating DL DCI for UE " << ueInfo->m_rnti << " assigned "
+        //                                                 << ueInfo->m_dlRBG << " DL RBG, but TBS < 10");
+        //     return nullptr;
+        // }
+
+        // const std::vector<uint8_t> notchedRBGsMask = GetDlNotchedRbgMask();
+        // int zeroes = std::count(notchedRBGsMask.begin(), notchedRBGsMask.end(), 0);
+        // uint32_t numOfAssignableRbgs = GetBandwidthInRbg() - zeroes;
+
+        // uint8_t numSym = static_cast<uint8_t>(ueInfo->m_dlRBG / numOfAssignableRbgs);
+
+        // auto dci = CreateDci(spoint,
+        //                     ueInfo,
+        //                     ueInfo->m_dlTbSize,
+        //                     DciInfoElementTdma::DL,
+        //                     ueInfo->m_dlMcs,
+        //                     ndi,
+        //                     rv,
+        //                     std::max(numSym, static_cast<uint8_t>(1)));
+
+        // // The starting point must advance.
+        // spoint->m_rbg = 0;
+        // spoint->m_sym += numSym;
+
+        // return dci;
+
+        return nullptr;
+    }
+
+    std::shared_ptr<DciInfoElementTdma>
+    CustomScheduler::CreateUlDci(NrMacSchedulerNs3::PointInFTPlane* spoint,
+                                    const std::shared_ptr<NrMacSchedulerUeInfo>& ueInfo,
+                                    uint32_t maxSym) const
+    {
+        // NS_LOG_FUNCTION(this);
+        // uint32_t tbs = m_ulAmc->CalculateTbSize(ueInfo->m_ulMcs, ueInfo->m_ulRBG * GetNumRbPerRbg());
+
+        // // If is less than 12, 7 (3 mac header, 2 rlc header, 2 data) + SHORT_BSR (5),
+        // // then we can't transmit any new data, so don't create dci.
+        // if (tbs < 12)
+        // {
+        //     NS_LOG_DEBUG("While creating UL DCI for UE " << ueInfo->m_rnti << " assigned "
+        //                                                 << ueInfo->m_ulRBG << " UL RBG, but TBS "
+        //                                                 << tbs << " < 12");
+        //     return nullptr;
+        // }
+
+        // const std::vector<uint8_t> notchedRBGsMask = GetUlNotchedRbgMask();
+        // int zeroes = std::count(notchedRBGsMask.begin(), notchedRBGsMask.end(), 0);
+        // uint32_t numOfAssignableRbgs = GetBandwidthInRbg() - zeroes;
+
+        // uint8_t numSym = static_cast<uint8_t>(std::max(ueInfo->m_ulRBG / numOfAssignableRbgs, 1U));
+        // numSym = std::min(numSym, static_cast<uint8_t>(maxSym));
+
+        // NS_ASSERT(spoint->m_sym >= numSym);
+
+        // // The starting point must go backward to accomodate the needed sym
+        // spoint->m_sym -= numSym;
+
+        // // Due to MIMO implementation MCS and TB size are vectors
+        // std::vector<uint8_t> ulMcs = {ueInfo->m_ulMcs};
+        // std::vector<uint32_t> ulTbs = {tbs};
+        // std::vector<uint8_t> ndi = {1};
+        // std::vector<uint8_t> rv = {0};
+
+        // auto dci = CreateDci(spoint, ueInfo, ulTbs, DciInfoElementTdma::UL, ulMcs, ndi, rv, numSym);
+
+        // // Reset the RBG (we are TDMA)
+        // spoint->m_rbg = 0;
+
+        // return dci;
+
+        return nullptr;
+    }
+
+
+    
     void flow_monitor(){
         // Print per-flow statistics
         averageFlowThroughput = 0.0;

@@ -82,6 +82,7 @@ namespace ns3{
         private:
         std::shared_ptr<NrMacSchedulerUeInfo> CreateUeRepresentation(
         const NrMacCschedSapProvider::CschedUeConfigReqParameters& params);
+
         uint8_t GetTpc();
         
         BeamSymbolMap AssignDLRBG(uint32_t symAvail, const ActiveUeMap& activeDl);
@@ -98,9 +99,11 @@ namespace ns3{
         const std::shared_ptr<NrMacSchedulerUeInfo>& ueInfo,
         uint32_t maxSym);
 
-        void ChangeDlBeam(PointInFTPlane* spoint, uint32_t symOfBeam);
+        void ChangeDlBeam(PointInFTPlane* spoint, uint32_t symOfBeam)
+        {}
 
-        void ChangeUlBeam(PointInFTPlane* spoint, uint32_t symOfBeam);
+        void ChangeUlBeam(PointInFTPlane* spoint, uint32_t symOfBeam)
+        {}
 
     };
 
