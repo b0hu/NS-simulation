@@ -213,7 +213,7 @@ namespace ns3{
     CustomScheduler::GetTypeId()
     {
         static TypeId tid = TypeId("ns3::CustomScheduler")
-                            .SetParent<NrMacSchedulerTdmaRR>()
+                            .SetParent<NrMacSchedulerNs3>()
                             .AddConstructor<CustomScheduler>();
 	/*static TypeId tid = TypeId("ns3::CustomScheduler")
                             .SetParent<NrMacSchedulerTdma>();*/
