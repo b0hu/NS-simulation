@@ -72,18 +72,42 @@ namespace ns3{
     // };
 
     class CustomScheduler :  NrMacSchedulerNs3
-{
-	public:
-		CustomScheduler();
-       	        ~CustomScheduler() override;
-	       	static TypeId GetTypeId();
-		//struct PoInFTPlane ft = new PointInFTPlane(rbg,sym);
-};
+    {
+        public:
+            CustomScheduler();
+            ~CustomScheduler() override;
+            static TypeId GetTypeId();
+            //struct PoInFTPlane ft = new PointInFTPlane(rbg,sym);
 
-class Test : Object{
-	public:
-		Test();
-};
+        private:
+        std::shared_ptr<NrMacSchedulerUeInfo> CreateUeRepresentation(
+        const NrMacCschedSapProvider::CschedUeConfigReqParameters& params);
+        uint8_t GetTpc();
+        
+        BeamSymbolMap AssignDLRBG(uint32_t symAvail, const ActiveUeMap& activeDl);
+        
+        BeamSymbolMap AssignULRBG(uint32_t symAvail, const ActiveUeMap& activeUl);
+
+        std::shared_ptr<DciInfoElementTdma> CreateDlDci(
+        PointInFTPlane* spoint,
+        const std::shared_ptr<NrMacSchedulerUeInfo>& ueInfo,
+        uint32_t maxSym);
+
+        std::shared_ptr<DciInfoElementTdma> CreateUlDci(
+        PointInFTPlane* spoint,
+        const std::shared_ptr<NrMacSchedulerUeInfo>& ueInfo,
+        uint32_t maxSym);
+
+        void ChangeDlBeam(PointInFTPlane* spoint, uint32_t symOfBeam);
+
+        void ChangeUlBeam(PointInFTPlane* spoint, uint32_t symOfBeam);
+
+    };
+
+    /*class Test : Object{
+        public:
+            Test();
+    };*/
 }
 
 

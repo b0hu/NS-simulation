@@ -223,7 +223,7 @@ namespace ns3{
 
     CustomScheduler::CustomScheduler() : NrMacSchedulerNs3()
     {
-	NS_LOG_FUNCTION(this);
+	    NS_LOG_FUNCTION(this);
     }
 
 
