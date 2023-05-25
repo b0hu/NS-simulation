@@ -81,28 +81,28 @@ namespace ns3{
 
         private:
         std::shared_ptr<NrMacSchedulerUeInfo> CreateUeRepresentation(
-        const NrMacCschedSapProvider::CschedUeConfigReqParameters& params);
+        const NrMacCschedSapProvider::CschedUeConfigReqParameters& params) const override;
 
-        uint8_t GetTpc();
+        uint8_t GetTpc() const override;
         
-        BeamSymbolMap AssignDLRBG(uint32_t symAvail, const ActiveUeMap& activeDl);
+        BeamSymbolMap AssignDLRBG(uint32_t symAvail, const ActiveUeMap& activeDl) const override;
         
-        BeamSymbolMap AssignULRBG(uint32_t symAvail, const ActiveUeMap& activeUl);
+        BeamSymbolMap AssignULRBG(uint32_t symAvail, const ActiveUeMap& activeUl) const override;
 
         std::shared_ptr<DciInfoElementTdma> CreateDlDci(
         PointInFTPlane* spoint,
         const std::shared_ptr<NrMacSchedulerUeInfo>& ueInfo,
-        uint32_t maxSym);
+        uint32_t maxSym) const override;
 
         std::shared_ptr<DciInfoElementTdma> CreateUlDci(
         PointInFTPlane* spoint,
         const std::shared_ptr<NrMacSchedulerUeInfo>& ueInfo,
-        uint32_t maxSym);
+        uint32_t maxSym) const override;
 
-        void ChangeDlBeam(PointInFTPlane* spoint, uint32_t symOfBeam)
+        void ChangeDlBeam(PointInFTPlane* spoint, uint32_t symOfBeam) const override
         {}
 
-        void ChangeUlBeam(PointInFTPlane* spoint, uint32_t symOfBeam)
+        void ChangeUlBeam(PointInFTPlane* spoint, uint32_t symOfBeam) const override
         {}
 
     };
