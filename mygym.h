@@ -1,10 +1,11 @@
 #ifndef MY_GYM_ENTITY_H
 #define MY_GYM_ENTITY_H
 
-#include "ns3/opengym-module.h"
+//#include "ns3/opengym-module.h"
 #include "ns3/net-device-container.h"
 #include "ns3/flow-monitor-module.h"
-#include "ns3/nr-mac-scheduler-tdma-rr.h"
+#include "ns3/nr-mac-scheduler-tdma.h"
+#include "ns3/nr-mac-scheduler-ns3.h"
 
 namespace ns3{
     extern NetDeviceContainer enbNetDev;
@@ -70,15 +71,20 @@ namespace ns3{
     //     std::string GetExtraInfo(void);
     // };
 
-    class CustomScheduler : NrMacSchedulerTdmaRR
+    class CustomScheduler :  NrMacSchedulerNs3
 {
 	public:
 		CustomScheduler();
-        ~CustomScheduler();
-		static TypeId GetTypeId();
+       	        ~CustomScheduler() override;
+	       	static TypeId GetTypeId();
 		//struct PoInFTPlane ft = new PointInFTPlane(rbg,sym);
 };
-    
+
+class Test : Object{
+	public:
+		Test();
+};
 }
+
 
 #endif

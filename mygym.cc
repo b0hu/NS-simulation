@@ -4,6 +4,8 @@
 #include "ns3/node-list.h"
 #include "ns3/log.h"
 #include "ns3/nr-module.h"
+#include "ns3/nr-mac-scheduler-tdma.h"
+#include "ns3/nr-mac-scheduler-ns3.h"
 #include "ns3/flow-monitor-module.h"
 
 #include <iostream>
@@ -204,15 +206,26 @@ namespace ns3{
     //     Notify();
     // }
 
+    NS_LOG_COMPONENT_DEFINE("CustomScheduler");
+    NS_OBJECT_ENSURE_REGISTERED(CustomScheduler);
+
     TypeId
-    CustomerSceduler::GetTypeId()
+    CustomScheduler::GetTypeId()
     {
         static TypeId tid = TypeId("ns3::CustomScheduler")
                             .SetParent<NrMacSchedulerTdmaRR>()
                             .AddConstructor<CustomScheduler>();
+	/*static TypeId tid = TypeId("ns3::CustomScheduler")
+                            .SetParent<NrMacSchedulerTdma>();*/
 
         return tid;
     }
+
+    CustomScheduler::CustomScheduler() : NrMacSchedulerNs3()
+    {
+	NS_LOG_FUNCTION(this);
+    }
+
 
     void flow_monitor(){
         // Print per-flow statistics
