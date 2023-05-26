@@ -15,6 +15,7 @@
  */
 
 #include "mygym.h"
+#include "ns3/nr-module.h"
 #include "ns3/core-module.h"
 #include "ns3/config-store.h"
 #include "ns3/network-module.h"

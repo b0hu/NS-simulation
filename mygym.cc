@@ -221,7 +221,7 @@ namespace ns3{
         return tid;
     }
 
-    CustomScheduler::CustomScheduler() : NrMacSchedulerNs3()
+    CustomScheduler::CustomScheduler(): NrMacSchedulerNs3()
     {
 	    NS_LOG_FUNCTION(this);
     }
