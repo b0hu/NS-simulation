@@ -212,11 +212,11 @@ namespace ns3{
     TypeId
     CustomScheduler::GetTypeId()
     {
-        static TypeId tid = TypeId("ns3::CustomScheduler")
-                            .SetParent<NrMacSchedulerNs3>()
-                            .AddConstructor<CustomScheduler>();
-	/*static TypeId tid = TypeId("ns3::CustomScheduler")
-                            .SetParent<NrMacSchedulerTdma>();*/
+        //static TypeId tid = TypeId("ns3::CustomScheduler")
+          //                  .SetParent<NrMacSchedulerNs3>()
+            //                .AddConstructor<CustomScheduler>();
+	static TypeId tid = TypeId("ns3::CustomScheduler")
+                            .SetParent<NrMacSchedulerTdma>();
 
         return tid;
     }
@@ -317,7 +317,7 @@ namespace ns3{
                                     const std::shared_ptr<NrMacSchedulerUeInfo>& ueInfo,
                                     [[maybe_unused]] uint32_t maxSym) const
     {
-        // NS_LOG_FUNCTION(this);
+        NS_LOG_FUNCTION(this);
         // uint16_t countLessThanMinBytes = 0;
 
         // // we do not need to recalculate the TB size here because we already
@@ -387,7 +387,7 @@ namespace ns3{
                                     const std::shared_ptr<NrMacSchedulerUeInfo>& ueInfo,
                                     uint32_t maxSym) const
     {
-        // NS_LOG_FUNCTION(this);
+         NS_LOG_FUNCTION(this);
         // uint32_t tbs = m_ulAmc->CalculateTbSize(ueInfo->m_ulMcs, ueInfo->m_ulRBG * GetNumRbPerRbg());
 
         // // If is less than 12, 7 (3 mac header, 2 rlc header, 2 data) + SHORT_BSR (5),

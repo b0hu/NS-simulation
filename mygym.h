@@ -71,6 +71,7 @@ namespace ns3{
     //     std::string GetExtraInfo(void);
     // };
 
+    
     class CustomScheduler :  public NrMacSchedulerNs3
     {
         public:
@@ -108,10 +109,6 @@ namespace ns3{
 
     };
 
-    /*class Test : Object{
-        public:
-            Test();
-    };*/
 }
 
 

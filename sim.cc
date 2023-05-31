@@ -15,7 +15,7 @@
  */
 
 #include "mygym.h"
-#include "ns3/nr-module.h"
+//#include "ns3/nr-module.h"
 #include "ns3/core-module.h"
 #include "ns3/config-store.h"
 #include "ns3/network-module.h"
@@ -63,7 +63,7 @@ uint8_t sym = 0;
 //struct PointInFTPlane temp = new PointInFTPlane(rbg, sym);
 
 
-CustomScheduler* temp;
+//CustomScheduler* temp;
 NrMacSchedulerNs3 * temp2;
 NrMacSchedulerUeInfo * u;
 //temp->PointInFTPlane(rbg, sym);
@@ -79,7 +79,7 @@ main (int argc, char *argv[])
 
   Config::SetDefault ("ns3::LteRlcUm::MaxTxBufferSize", UintegerValue (999999999));
 
-std::cout << temp->GetTypeId() << std::endl;
+//std::cout << temp->GetTypeId() << std::endl;
 
 
   CommandLine cmd;
@@ -179,7 +179,7 @@ std::cout << temp->GetTypeId() << std::endl;
 
   nrHelper->SetGnbPhyAttribute ("TxPower", DoubleValue (4.0));
 
-  uint32_t bwpIdForeMBB = 0;
+  //uint32_t bwpIdForeMBB = 0;
 
   // nrHelper->SetGnbBwpManagerAlgorithmAttribute ("NGBR_LOW_LAT_EMBB", UintegerValue (bwpIdForeMBB));
 
