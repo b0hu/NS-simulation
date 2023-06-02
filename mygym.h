@@ -72,7 +72,7 @@ namespace ns3{
     // };
 
     
-    class CustomScheduler :  public NrMacSchedulerNs3
+    /*class CustomScheduler :  public NrMacSchedulerNs3
     {
         public:
             CustomScheduler();
@@ -106,6 +106,61 @@ namespace ns3{
 
         void ChangeUlBeam(PointInFTPlane* spoint, uint32_t symOfBeam) const override
         {}
+
+    };*/
+
+    class TestScheduler :  public NrMacSchedulerTdma{
+        public:
+            static TypeId GetTypeId();
+            TestScheduler();
+            ~TestScheduler() override
+            {}
+        
+        protected:
+            std::shared_ptr<NrMacSchedulerUeInfo> CreateUeRepresentation(
+        const NrMacCschedSapProvider::CschedUeConfigReqParameters& params) const override;
+
+        std::function<bool(const NrMacSchedulerNs3::UePtrAndBufferReq& lhs,
+                       const NrMacSchedulerNs3::UePtrAndBufferReq& rhs)>
+        GetUeCompareDlFn() const override;
+
+        /**
+         * \brief Return the comparison function to sort UL UE according to the scheduler policy
+         * \return a pointer to NrMacSchedulerUeInfoRR::CompareUeWeightsUl
+         */
+        std::function<bool(const NrMacSchedulerNs3::UePtrAndBufferReq& lhs,
+                        const NrMacSchedulerNs3::UePtrAndBufferReq& rhs)>
+        GetUeCompareUlFn() const override;
+
+        void AssignedDlResources(const UePtrAndBufferReq& ue,
+                                const FTResources& assigned,
+                                const FTResources& totAssigned) const override;
+
+        void AssignedUlResources(const UePtrAndBufferReq& ue,
+                                const FTResources& assigned,
+                                const FTResources& totAssigned) const override;
+
+        void NotAssignedDlResources(const UePtrAndBufferReq& ue,
+                                    const FTResources& notAssigned,
+                                    const FTResources& totalAssigned) const override
+        {
+        }
+
+        void NotAssignedUlResources(const UePtrAndBufferReq& ue,
+                                    const FTResources& notAssigned,
+                                    const FTResources& totalAssigned) const override
+        {
+        }
+
+        void BeforeDlSched(const UePtrAndBufferReq& ue,
+                        const FTResources& assignableInIteration) const override
+        {
+        }
+
+        void BeforeUlSched(const UePtrAndBufferReq& ue,
+                        const FTResources& assignableInIteration) const override
+        {
+        }
 
     };
 
