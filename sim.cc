@@ -63,12 +63,12 @@ uint8_t sym = 0;
 //struct PointInFTPlane temp = new PointInFTPlane(rbg, sym);
 
 
-//CustomScheduler* temp;
-NrMacSchedulerNs3 * temp2;
-NrMacSchedulerUeInfo * u;
+CustomScheduler* temp;
+//NrMacSchedulerNs3 * temp2;
+//NrMacSchedulerUeInfo * u;
 //temp->PointInFTPlane(rbg, sym);
 //CustomScheduler:: FTResources ft = {rbg, sym};
-NrMacSchedulerNs3::PointInFTPlane * ft = new NrMacSchedulerNs3::PointInFTPlane(rbg, sym);
+//NrMacSchedulerNs3::PointInFTPlane * ft = new NrMacSchedulerNs3::PointInFTPlane(rbg, sym);
 
 NS_LOG_COMPONENT_DEFINE ("eMBB NS Simulation Test");
 
@@ -138,7 +138,8 @@ main (int argc, char *argv[])
   Ptr<NrPointToPointEpcHelper> epcHelper = CreateObject<NrPointToPointEpcHelper> ();
   Ptr<IdealBeamformingHelper> idealBeamformingHelper = CreateObject<IdealBeamformingHelper>();
   Ptr<NrHelper> nrHelper = CreateObject<NrHelper> ();
-  //nrHelper->SetSchedulerTypeId(TypeId::LookupByName("ns3::NrMacSchedulerOfdmaRR"));
+  nrHelper->SetSchedulerTypeId(TypeId::LookupByName("ns3::NrMacSchedulerOfdmaRR"));
+  //nrHelper->SetSchedulerTypeId(temp->GetTypeId());
   //nrHelper->SetSchedulerTypeId(temp2->GetTypeId());
 
   nrHelper->SetBeamformingHelper (idealBeamformingHelper);

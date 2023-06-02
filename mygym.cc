@@ -212,11 +212,11 @@ namespace ns3{
     TypeId
     CustomScheduler::GetTypeId()
     {
-        //static TypeId tid = TypeId("ns3::CustomScheduler")
-          //                  .SetParent<NrMacSchedulerNs3>()
-            //                .AddConstructor<CustomScheduler>();
-	static TypeId tid = TypeId("ns3::CustomScheduler")
-                            .SetParent<NrMacSchedulerTdma>();
+        static TypeId tid = TypeId("ns3::CustomScheduler")
+                            .SetParent<NrMacSchedulerNs3>()
+                            .AddConstructor<CustomScheduler>();
+	//static TypeId tid = TypeId("ns3::CustomScheduler")
+          //                  .SetParent<NrMacSchedulerTdma>();
 
         return tid;
     }
