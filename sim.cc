@@ -63,7 +63,7 @@ uint8_t sym = 0;
 //struct PointInFTPlane temp = new PointInFTPlane(rbg, sym);
 
 
-CustomScheduler* temp;
+//CustomScheduler* temp;
 //NrMacSchedulerNs3 * temp2;
 //NrMacSchedulerUeInfo * u;
 //temp->PointInFTPlane(rbg, sym);
@@ -138,7 +138,8 @@ main (int argc, char *argv[])
   Ptr<NrPointToPointEpcHelper> epcHelper = CreateObject<NrPointToPointEpcHelper> ();
   Ptr<IdealBeamformingHelper> idealBeamformingHelper = CreateObject<IdealBeamformingHelper>();
   Ptr<NrHelper> nrHelper = CreateObject<NrHelper> ();
-  nrHelper->SetSchedulerTypeId(TypeId::LookupByName("ns3::NrMacSchedulerOfdmaRR"));
+  //nrHelper->SetSchedulerTypeId(TypeId::LookupByName("ns3::NrMacSchedulerOfdmaRR"));
+  nrHelper->SetSchedulerTypeId(TypeId::LookupByName("ns3::TestScheduler"));
   //nrHelper->SetSchedulerTypeId(temp->GetTypeId());
   //nrHelper->SetSchedulerTypeId(temp2->GetTypeId());
 
