@@ -70,7 +70,7 @@ uint8_t sym = 0;
 //CustomScheduler:: FTResources ft = {rbg, sym};
 //NrMacSchedulerNs3::PointInFTPlane * ft = new NrMacSchedulerNs3::PointInFTPlane(rbg, sym);
 
-LogComponentEnable("NrMacSchedulerOfdmaRR", LOG_LEVEL_INFO);
+//LogComponentEnable("ns3::NrMacSchedulerOfdmaRR", LOG_LEVEL_INFO);
 NS_LOG_COMPONENT_DEFINE ("eMBB NS Simulation Test");
 
 int 
