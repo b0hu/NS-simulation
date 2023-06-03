@@ -109,19 +109,42 @@ namespace ns3{
 
     };*/
 
-    class TestScheduler :  public NrMacSchedulerTdma{
-        public:
-            static TypeId GetTypeId();
-            TestScheduler();
-            ~TestScheduler() override
-            {}
-        
-        protected:
-            std::shared_ptr<NrMacSchedulerUeInfo> CreateUeRepresentation(
-        const NrMacCschedSapProvider::CschedUeConfigReqParameters& params) const override;
+    class CustomScheduler : public NrMacSchedulerOfdma
+    {
+    public:
+        /**
+         * \brief GetTypeId
+         * \return The TypeId of the class
+         */
+        static TypeId GetTypeId();
 
+        /**
+         * \brief NrMacSchedulerTdmaRR constructor
+         */
+        CustomScheduler();
+
+        /**
+         * \brief ~NrMacSchedulerTdmaRR deconstructor
+         */
+        ~CustomScheduler() override
+        {
+        }
+
+    protected:
+        /**
+         * \brief Create an UE representation of the type NrMacSchedulerUeInfoRR
+         * \param params parameters
+         * \return NrMacSchedulerUeInfoRR instance
+         */
+        std::shared_ptr<NrMacSchedulerUeInfo> CreateUeRepresentation(
+            const NrMacCschedSapProvider::CschedUeConfigReqParameters& params) const override;
+
+        /**
+         * \brief Return the comparison function to sort DL UE according to the scheduler policy
+         * \return a pointer to NrMacSchedulerUeInfoRR::CompareUeWeightsDl
+         */
         std::function<bool(const NrMacSchedulerNs3::UePtrAndBufferReq& lhs,
-                       const NrMacSchedulerNs3::UePtrAndBufferReq& rhs)>
+                        const NrMacSchedulerNs3::UePtrAndBufferReq& rhs)>
         GetUeCompareDlFn() const override;
 
         /**
@@ -132,14 +155,32 @@ namespace ns3{
                         const NrMacSchedulerNs3::UePtrAndBufferReq& rhs)>
         GetUeCompareUlFn() const override;
 
+        /**
+         * \brief Update the UE representation after a symbol (DL) has been assigned to it
+         * \param ue UE to which a symbol has been assigned
+         * \param assigned the amount of resources assigned
+         * \param totAssigned the total amount of resources assigned in the slot
+         *
+         * Update DL metrics by calling NrMacSchedulerUeInfoRR::UpdateDlMetric
+         */
         void AssignedDlResources(const UePtrAndBufferReq& ue,
                                 const FTResources& assigned,
                                 const FTResources& totAssigned) const override;
 
+        /**
+         * \brief Update the UE representation after a symbol (DL) has been assigned to it
+         * \param ue UE to which a symbol has been assigned
+         * \param assigned the amount of resources assigned
+         * \param totAssigned the total amount of resources assigned in the slot
+         *
+         * Update DL metrics by calling NrMacSchedulerUeInfoRR::UpdateUlMetric
+         */
         void AssignedUlResources(const UePtrAndBufferReq& ue,
                                 const FTResources& assigned,
                                 const FTResources& totAssigned) const override;
 
+        // RR is a simple scheduler: it doesn't do anything in the next
+        // inherited calls.
         void NotAssignedDlResources(const UePtrAndBufferReq& ue,
                                     const FTResources& notAssigned,
                                     const FTResources& totalAssigned) const override
@@ -161,7 +202,59 @@ namespace ns3{
                         const FTResources& assignableInIteration) const override
         {
         }
+    };
 
+    class CustomSchedulerUeInfo : public NrMacSchedulerUeInfo
+    {
+    public:
+        /**
+         * \brief NrMacSchedulerUeInfoRR constructor
+         * \param rnti RNTI of the UE
+         * \param beamConfId BeamConfId of the UE
+         * \param fn A function that tells how many RB per RBG
+         */
+        CustomSchedulerUeInfo(uint16_t rnti, BeamConfId beamConfId, const GetRbPerRbgFn& fn)
+            : NrMacSchedulerUeInfo(rnti, beamConfId, fn)
+        {
+        }
+
+        /**
+         * \brief comparison function object (i.e. an object that satisfies the
+         * requirements of Compare) which returns ​true if the first argument is less
+         * than (i.e. is ordered before) the second.
+         * \param lue Left UE
+         * \param rue Right UE
+         * \return true if the assigned RBG of lue is less than the assigned RBG of rue
+         *
+         * The ordering is made by considering the RBG. An UE with 0 RBG will always
+         * be the first (i.e., has an higher priority) in a RR scheduler. The objective
+         * is to distribute evenly all the resources, in order to have the same RBG
+         * number for all the UEs.
+         */
+        static bool CompareUeWeightsDl(const NrMacSchedulerNs3::UePtrAndBufferReq& lue,
+                                    const NrMacSchedulerNs3::UePtrAndBufferReq& rue)
+        {
+            return (lue.first->m_dlRBG < rue.first->m_dlRBG);
+        }
+
+        /**
+         * \brief comparison function object (i.e. an object that satisfies the
+         * requirements of Compare) which returns ​true if the first argument is less
+         * than (i.e. is ordered before) the second.
+         * \param lue Left UE
+         * \param rue Right UE
+         * \return true if the assigned RBG of lue is less than the assigned RBG of rue
+         *
+         * The ordering is made by considering the RBG. An UE with 0 RBG will always
+         * be the first (i.e., has an higher priority) in a RR scheduler. The objective
+         * is to distribute evenly all the resources, in order to have the same RBG
+         * number for all the UEs.
+         */
+        static bool CompareUeWeightsUl(const NrMacSchedulerNs3::UePtrAndBufferReq& lue,
+                                    const NrMacSchedulerNs3::UePtrAndBufferReq& rue)
+        {
+            return (lue.first->m_ulRBG < rue.first->m_ulRBG);
+        }
     };
 
 }

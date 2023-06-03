@@ -206,10 +206,11 @@ namespace ns3{
     //     Notify();
     // }
 
-    /*NS_LOG_COMPONENT_DEFINE("CustomScheduler");
+    NS_LOG_COMPONENT_DEFINE("CustomScheduler");
     NS_OBJECT_ENSURE_REGISTERED(CustomScheduler);
+    LogComponentEnable("CustomScheduler", LOG_LEVEL_INFO);
 
-    TypeId
+    /*TypeId
     CustomScheduler::GetTypeId()
     {
         static TypeId tid = TypeId("ns3::CustomScheduler")
@@ -506,5 +507,67 @@ namespace ns3{
                 std::cout << f.rdbuf ();
             }
     }
+
+    TypeId
+    CustomScheduler::GetTypeId()
+    {
+        static TypeId tid = TypeId("ns3::CustomScheduler")
+                                .SetParent<NrMacSchedulerOfdma>()
+                                .AddConstructor<CustomScheduler>();
+        return tid;
+    }
+
+    CustomScheduler::CustomScheduler()
+        : NrMacSchedulerOfdma()
+    {
+    }
+
+    std::shared_ptr<NrMacSchedulerUeInfo>
+    CustomScheduler::CreateUeRepresentation(
+        const NrMacCschedSapProvider::CschedUeConfigReqParameters& params) const
+    {
+        NS_LOG_FUNCTION(this);
+        return std::make_shared<CustomSchedulerUeInfo>(
+            params.m_rnti,
+            params.m_beamConfId,
+            std::bind(&NrMacSchedulerOfdmaRR::GetNumRbPerRbg, this));
+    }
+
+    void
+    CustomScheduler::AssignedDlResources(const UePtrAndBufferReq& ue,
+                                            [[maybe_unused]] const FTResources& assigned,
+                                            [[maybe_unused]] const FTResources& totAssigned) const
+    {
+        NS_LOG_FUNCTION(this);
+        GetFirst GetUe;
+        GetUe(ue)->UpdateDlMetric(m_dlAmc);
+    }
+
+    void
+    CustomScheduler::AssignedUlResources(const UePtrAndBufferReq& ue,
+                                            [[maybe_unused]] const FTResources& assigned,
+                                            [[maybe_unused]] const FTResources& totAssigned) const
+    {
+        NS_LOG_FUNCTION(this);
+        GetFirst GetUe;
+        GetUe(ue)->UpdateUlMetric(m_ulAmc);
+    }
+
+    std::function<bool(const NrMacSchedulerNs3::UePtrAndBufferReq& lhs,
+                    const NrMacSchedulerNs3::UePtrAndBufferReq& rhs)>
+    CustomScheduler::GetUeCompareDlFn() const
+    {
+        return CustomSchedulerUeInfo::CompareUeWeightsDl;
+    }
+
+    std::function<bool(const NrMacSchedulerNs3::UePtrAndBufferReq& lhs,
+                    const NrMacSchedulerNs3::UePtrAndBufferReq& rhs)>
+    CustomScheduler::GetUeCompareUlFn() const
+    {
+        return CustomSchedulerUeInfo::CompareUeWeightsUl;
+    }
+
+    //ueinfo
+
     
 }
