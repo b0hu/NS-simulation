@@ -530,7 +530,7 @@ namespace ns3{
         return std::make_shared<CustomSchedulerUeInfo>(
             params.m_rnti,
             params.m_beamConfId,
-            std::bind(&NrMacSchedulerOfdmaRR::GetNumRbPerRbg, this));
+            std::bind(&CustomScheduler::GetNumRbPerRbg, this));
     }
 
     void
