@@ -6,6 +6,7 @@
 #include "ns3/flow-monitor-module.h"
 #include "ns3/nr-mac-scheduler-tdma.h"
 #include "ns3/nr-mac-scheduler-ns3.h"
+#include "ns3/nr-mac-scheduler-ofdma.h"
 
 namespace ns3{
     extern NetDeviceContainer enbNetDev;
