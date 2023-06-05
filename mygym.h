@@ -130,9 +130,18 @@ namespace ns3{
         ~CustomScheduler() override
         {
         }
+	/*class Test :
+	    {	
+    		public:
+		Test(){}
+		~Test(){}
+		void hello(){
+			cout << "hello" << endl;
+		}
+		};*/
 
     protected:
-        /**
+	        /**
          * \brief Create an UE representation of the type NrMacSchedulerUeInfoRR
          * \param params parameters
          * \return NrMacSchedulerUeInfoRR instance
