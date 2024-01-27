@@ -159,14 +159,12 @@ actor_network_optimizer = optim.RMSprop(actor.parameters(), lr=1e-4)
 
 try:
     while True:
+        cumu_v = 0
         print("Start iteration: ", currIt)
         obs = env.reset()
         print("Step: ", stepIdx)
         print("---obs:", obs)
 
-        g_t = 0
-        trace = np.zeros([trace_size])
-        rewards = np.zeros([trace_size])
         obs_tensor = torch.tensor(obs, dtype=torch.float)
         obs_tensor = torch.reshape(obs_tensor, (obs_tensor.shape[0],1))
 
@@ -175,7 +173,7 @@ try:
        
         v = value(obs_tensor)
         #v = value(obs_tensor).cpu()
-        values.append(v)
+        #values.append(v)
 
         while True:
             stepIdx += 1
@@ -186,48 +184,48 @@ try:
             obs, reward, done, info = env.step(action)
             obs_tensor = torch.tensor(obs, dtype=torch.float)
             obs_tensor = torch.reshape(obs_tensor, (obs_tensor.shape[0],1))
-
-            #g_t += pow(gamma,currIt) * reward
-
-            #rewards.append(reward)
-            trace[currIt%15] = v
-            rewards[currIt%15] = reward
             
-            pred_v = values[-1]
+            td_target += (reward + v * gamma)
+            #td_target = torch.tensor(td_target, dtype=torch.float).requires_grad_(True)
+            #td_target = td_target.to(device)
+            
+            #pred_v = values[-1]
             v = value(obs_tensor)
-            #g_t += pow(gamma,(currIt + 1)) * v
             
             print("--value: ", v)
             
 
-            #td_target = v + alpha * (g_t - v)
-            td_target = reward + gamma * v
-            td_target = torch.tensor(td_target, dtype=torch.float).requires_grad_(True)
-            td_target = td_target.to(device)
+            cumu_v += v
+
+            trace = torch.tensor(cumu_v/(currIt + 1), dtype=torch.float)
+            trace.to(device)
+            rewards = torch.tensor(td_target/(currIt + 1), dtype=torch.float)
+            rewards.to(device)
+            
 
             #values.append(v)
 
-            if currIt % 15 == 0 and currIt != 0:
+            #if currIt % 15 == 0 and currIt != 0:
 
                 
-                trace = np.zeros([trace_size])
-                rewards = np.zeros([trace_size])
+            #trace = np.zeros([trace_size])
+            #rewards = np.zeros([trace_size])
 
-                actor_loss = actor_criterion(trace, rewards)
-                value_loss = value_criterion(trace, rewards)
+            actor_loss = actor_criterion(trace, rewards)
+            value_loss = value_criterion(trace, rewards)
 
-                
-                #optimize actor network(based on advantage)
-                with torch.autograd.set_detect_anomaly(True):
-                    actor_network_optimizer.zero_grad()
-                    actor_loss.backward(retain_graph=True)
-                    actor_network_optimizer.step()
+            
+            #optimize actor network(based on advantage)
+            with torch.autograd.set_detect_anomaly(True):
+                actor_network_optimizer.zero_grad()
+                actor_loss.backward(retain_graph=True)
+                actor_network_optimizer.step()
 
-                #optimize actor network(based on td error)
-                with torch.autograd.set_detect_anomaly(True):
-                    value_network_optimizer.zero_grad()
-                    value_loss.backward()
-                    value_network_optimizer.step()
+            #optimize actor network(based on td error)
+            with torch.autograd.set_detect_anomaly(True):
+                value_network_optimizer.zero_grad()
+                value_loss.backward()
+                value_network_optimizer.step()
             
             print("---obs, reward, done, info: ", obs, reward, done, info)
     
