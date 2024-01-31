@@ -26,7 +26,7 @@ namespace ns3{
     uint32_t urllcPacketSize1 = 32;
     uint32_t urllcPacketSize2 = 64;
 
-    uint32_t simTimeMs = 500000;
+    uint32_t simTimeMs = 200000;
     uint32_t envStepTime = 1000;
     uint32_t StartTimeMs = 200;
     double centralFrequencyBand = 28e9;
@@ -261,7 +261,7 @@ namespace ns3{
     //     return tid;
     // }
 
-    Ptr<OpenGymInterface> openGym = CreateObject<OpenGymInterface> (1111);
+    Ptr<OpenGymInterface> openGym = CreateObject<OpenGymInterface> (3333);
     
     /*
     Define observation space
@@ -355,7 +355,7 @@ namespace ns3{
     float
     GetReward(void)
     {
-        float reward = 100 * (pow((embbthruput * 25), 2) - pow((urllcdelay * 5), 2) + pow((mmtcthruput * 50), 2) - pow((mmtcdelay * 50), 2));
+        float reward = 100 * (pow((embbthruput * 30), 2) - pow((urllcdelay * 5), 2) + pow((mmtcthruput * 100), 2) - pow((mmtcdelay * 50), 2));
         rewardfile << reward << std::endl;
         return reward;
     }

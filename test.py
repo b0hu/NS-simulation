@@ -32,7 +32,7 @@ args = parser.parse_args()
 startSim = bool(args.start)
 iterationNum = int(args.iterations)
 
-port =1111
+port =3333
 simTime = 2000 # seconds
 stepTime = 200  # seconds
 seed = 0
@@ -40,10 +40,14 @@ simArgs = {"--simTime": simTime,
            "--testArg": 123}
 debug = False
 rewards = []
+g_t = []
 returns = []
 values = []
 gamma = 0.85
+trace_lambda = 0.5
 td_target = 0
+trace_size = 16
+alpha = 0.05
 
 #values: predicted rewards by value network
 #returns: calculated discounted returns
@@ -74,42 +78,6 @@ print("Action space: ", ac_space, ac_space.dtype)
 stepIdx = 0
 currIt = 0
 total_episodes = 200
-
-'''class DeepIO(nn.Module):
-    def __init__(self):
-        super(DeepIO, self).__init__()
-        self.rnn = nn.LSTM(input_size=6, hidden_size=512,
-                           num_layers=2, bidirectional=True)
-        self.drop_out = nn.Dropout(0.25)
-        self.fc1 = nn.Linear(512, 256)
-        self.bn1 = nn.BatchNorm1d(256)
-        self.fc_out = nn.Linear(256, 7)
-
-    def forward(self, x):
-        """
-        args:
-        x:  a list of inputs of diemension [BxTx6]
-        """
-        outputs = []
-        # iterate in the batch through all sequences
-        for xx in x:
-            s, n = xx.shape
-            out, hiden = self.rnn(xx.unsqueeze(1))
-            out = out.view(s, 1, 2, 512)
-            out = out[-1, :, 0]
-            outputs.append(out.squeeze())
-        outputs = torch.stack(outputs)
-
-        y = F.relu(self.fc1(outputs), inplace=True)
-        y = self.bn1(y)
-        y = self.drop_out(y)
-        y = self.out(y)
-        return y
-
-def edit_data(data):
-    data = torch.tensor(data, dtype=torch.float)
-    data = torch.reshape(data, (data.shape[0],1))
-    return data'''
 
 #design a LStm Network as the actor network
 class ActorNetwork(nn.Module):
@@ -150,14 +118,6 @@ class ValueNetwork(nn.Module):
         x = x.cuda()
         x, (_, _) = self.rnn1(x)
         _, (h, _) = self.rnn2(x)
-        #h = tuple([h.data])
-        #x, (_, _) = self.rnn3(h)
-        #_, (h, _) = self.rnn3(x)
-        #y = x.reshape(1, x.shape[0]).clone()
-        #x = x.view(1, x.shape[0]).clone()
-        #x = torch.cat([x, torch.zeros(1, 20 - x.shape[1])], dim = 1)
-        #pad = nn.ZeroPad2d((0,15 - x.shape[1], 0, 0))
-        #x = pad(x)
         return h.data
 
 value = ValueNetwork(1, 1, 1)
@@ -173,7 +133,7 @@ def roll_out(actor_network,task,sample_nums,value_network,init_state):
     state = init_state
 
 
-class A2C():
+'''class A2C():
     def __init__(self):
         super(A2C, self).__init__()
         self.actor = ActorNetwork(1, 1, 1)
@@ -185,22 +145,18 @@ class A2C():
     def learn(self, obs, reward):
         rewards.append(reward)
         returns.append(reward + gamma * values[-1])
-        #advantage = returns[-1] - values[-1]
-
         v = value(obs_tensor).detach()
-        values.append(v)
+        values.append(v)'''
 
 
 
-#value_criterion = nn.CrossEntropyLoss().to(device)
-value_criterion = nn.CrossEntropyLoss().to(device)
-#value_network_optimizer = optim.RMSprop(value.parameters(), lr=1e-4)
-value_network_optimizer = optim.Adam(value.parameters(), lr=1e-4)
+#value_criterion = nn.CrossEntropyLoss()
+value_criterion = nn.MSELoss().to(device)
+value_network_optimizer = optim.RMSprop(value.parameters(), lr=1e-4)
 
-#actor_criterion = nn.CrossEntropyLoss().to(device)
-actor_criterion = nn.CrossEntropyLoss().to(device)
-#actor_network_optimizer = optim.RMSprop(actor.parameters(), lr=1e-4)
-actor_network_optimizer = optim.Adam(actor.parameters(), lr=1e-4)
+#actor_criterion = nn.CrossEntropyLoss()
+actor_criterion = nn.MSELoss().to(device)
+actor_network_optimizer = optim.RMSprop(actor.parameters(), lr=1e-4)
 
 try:
     while True:
@@ -209,15 +165,12 @@ try:
         print("Step: ", stepIdx)
         print("---obs:", obs)
 
-        #actor = actor.train()
-        #value = value.train()
         obs_tensor = torch.tensor(obs, dtype=torch.float)
-        obs_tensor = torch.reshape(obs_tensor, (obs_tensor.shape[0],1))     
+        obs_tensor = torch.reshape(obs_tensor, (obs_tensor.shape[0],1))
 
         action = actor(obs_tensor)
         #action = actor(obs_tensor).cpu()
-        #obs_tensor = torch.cat([obs_tensor, torch.zeros(1, 20 - obs_tensor.shape[1])], dim = 0)
-        #x = torch.cat([obs_tensor, torch.zeros(20 - obs_tensor.shape[0], 1)], dim = 0)
+       
         v = value(obs_tensor)
         #v = value(obs_tensor).cpu()
         values.append(v)
@@ -232,60 +185,58 @@ try:
             obs_tensor = torch.tensor(obs, dtype=torch.float)
             obs_tensor = torch.reshape(obs_tensor, (obs_tensor.shape[0],1))
 
-            '''obs_tensor = torch.empty([0], dtype = torch.float32)
-
-            for i in range(len(obs)):
-                obs_tensor = torch.cat([obs_tensor, torch.Tensor([obs[i]])])'''
+            #g_t += pow(gamma,currIt) * reward
 
             rewards.append(reward)
-            #value_loss = value_criterion(torch.tensor(v, dtype=torch.float), td_target)
-
-            pred_v = values[-1]
             v = value(obs_tensor)
-            #v = value(obs_tensor).cpu()
-            
-            print("--value: ", v)
-            #print("--shape of value: ", v.shape)
-            #advantage = reward + gamma * v - values[-1]
-            td_target = reward + gamma * v
-            td_target = torch.tensor(td_target, dtype=torch.float).requires_grad_(True)
-
-            #actor_loss = actor_criterion(values[-1], td_target)
-            actor_loss = actor_criterion(pred_v, td_target)
-            value_loss = value_criterion(pred_v, td_target)
-
             values.append(v)
 
-            '''returns.append(values[-1])
-            for i in reversed(range(1, len(rewards))):
-                returns[i-1] = rewards[i-1] + gamma * returns[i]
-            returns = returns[:-1]'''
+            g = 0
+            for i in range(len(rewards)):
+                g += pow(rewards[i],i)
             
-            '''for i in returns:
-                td_target = td_target + i'''
+            g += pow(len(rewards), v)
+            g_t.append(g)
+            #g_t += pow(gamma,(currIt + 1)) * v
+            
+            print("--value: ", v)
+            print(g_t)
+            
+            td_target = 0
+            for i in range(len(g_t)-1):
+                td_target += (1-trace_lambda) * g_t[i]* pow(trace_lambda, i)
+            
+            td_target += g_t[-1] * pow(trace_lambda, (len(g_t)-1))
+            td_target = torch.as_tensor(td_target, dtype=torch.float64).requires_grad_(True)
+            td_target = td_target.to(device)
+            print(td_target)
 
-            #advantage = returns[-1] - values[-1]
-            #td_error
-            #value_loss = actor_criterion(returns[-1], values[-1])
+            trace = torch.as_tensor(v, dtype=torch.float64).requires_grad_(True)
+            trace = trace.to(device)
+            print(trace)
+
+            actor_loss = actor_criterion(trace, td_target)
+            value_loss = value_criterion(trace, td_target)
+
             
             #optimize actor network(based on advantage)
             with torch.autograd.set_detect_anomaly(True):
                 actor_network_optimizer.zero_grad()
                 actor_loss.backward(retain_graph=True)
+                nn.utils.clip_grad_norm_(actor.parameters(), 1)
                 actor_network_optimizer.step()
 
             #optimize actor network(based on td error)
             with torch.autograd.set_detect_anomaly(True):
                 value_network_optimizer.zero_grad()
                 value_loss.backward()
+                nn.utils.clip_grad_norm_(value.parameters(), 1)
                 value_network_optimizer.step()
             
             print("---obs, reward, done, info: ", obs, reward, done, info)
     
             action = actor(obs_tensor)
-            #action = actor(obs_tensor).cpu()
             
-            #temp = torch.cat([obs_tensor, action],dim = 1)
             print("---action: ", action)
             
             if done:

@@ -47,11 +47,11 @@ main (int argc, char *argv[])
   NS_LOG_UNCOND ("eMBB NS Test");
 
   Config::SetDefault ("ns3::LteRlcUm::MaxTxBufferSize", UintegerValue (999999999));
-  myfile.open ("./proposed/all.txt");
-  embbfile.open ("./proposed/embb.txt");
-  urllcfile.open ("./proposed/urllc.txt");
-  mmtcfile.open ("./proposed/mmtc.txt");
-  rewardfile.open ("./proposed/reward.txt");
+  myfile.open ("./lambda/all.txt");
+  embbfile.open ("./lambda/embb.txt");
+  urllcfile.open ("./lambda/urllc.txt");
+  mmtcfile.open ("./lambda/mmtc.txt");
+  rewardfile.open ("./lambda/reward.txt");
 
   CommandLine cmd;
 
@@ -164,6 +164,8 @@ main (int argc, char *argv[])
   //uint32_t bwpIdForeMBB = 0;
 
   // nrHelper->SetGnbBwpManagerAlgorithmAttribute ("NGBR_LOW_LAT_EMBB", UintegerValue (bwpIdForeMBB));
+
+  // nrHelper->SetUeBwpManagerAlgorithmAttribute ("NGBR_LOW_LAT_EMBB", UintegerValue (bwpIdForeMBB));
 
   // ueNetDev = nrHelper->InstallUeDevice(ueNodes, allBwps);
   eMBBNetDev1 = nrHelper->InstallUeDevice(eMBBueNodes1, allBwps);
